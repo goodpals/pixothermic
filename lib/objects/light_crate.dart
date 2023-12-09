@@ -1,9 +1,10 @@
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/sprites.dart';
+import 'package:hot_cold/objects/floatable.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
 
-class LightCrate extends BodyComponent {
+class LightCrate extends BodyComponent with Floatable {
   LightCrate({required Vector2 position, double size = unit * 31 / 32})
       : super(
           fixtureDefs: [
@@ -15,7 +16,7 @@ class LightCrate extends BodyComponent {
                   Vector2(size / 2, size / 2),
                   Vector2(size / 2, -size / 2),
                 ]),
-              friction: 0.4,
+              friction: 0.2,
               density: 2,
             ),
           ],

@@ -13,6 +13,7 @@ class Player extends BodyComponent with KeyboardHandler {
 
   // Technically possible for this to be true at the apex of a jump, but w/e.
   bool get isGrounded => body.linearVelocity.y.abs() < 0.1;
+  // bool get newGrounded => body.contacts.any((e) => e.isTouching() && ***SOMETHING***);
   Player({
     required Vector2 position,
     double width = unit / 2,
@@ -28,7 +29,7 @@ class Player extends BodyComponent with KeyboardHandler {
                   Vector2(width / 2, -height / 2),
                 ]),
               // restitution: 0.8,
-              friction: 0.4,
+              friction: 0.2,
               density: 1,
             ),
           ],
