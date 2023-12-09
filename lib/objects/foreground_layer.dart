@@ -4,22 +4,28 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/models/constants.dart';
+import 'package:hot_cold/models/entities.dart';
+import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/types.dart';
+import 'package:hot_cold/objects/ice_block.dart';
+import 'package:hot_cold/objects/light_crate.dart';
 import 'package:hot_cold/objects/static_block.dart';
+import 'package:hot_cold/utils/long_tick.dart';
 
-class ForegroundLayer extends PositionComponent {
-  final Map<IntVec, String> blocks;
+class ForegroundLayer extends PositionComponent with LongTick {
+  final LevelData level;
+
+  Map<IntVec, String> blocks;
   Map<IntVec, double> water;
-
-  double accTime = 0;
 
   bool hasBlock(IntVec pos) => blocks.containsKey(pos);
 
   ForegroundLayer({
     Vector2? position,
-    required this.blocks,
-    this.water = const {},
-  }) : super(
+    required this.level,
+  })  : blocks = {...level.foreground},
+        water = {...level.water},
+        super(
           position: position,
           anchor: Anchor.bottomLeft,
         );
@@ -34,17 +40,28 @@ class ForegroundLayer extends PositionComponent {
         ),
       );
     }
+    for (final e in level.entities.entries) {
+      final entity = switch (e.value) {
+        EntityType.lightCrate =>
+          LightCrate(position: Vector2(e.key.$1 * unit, e.key.$2 * unit)),
+        EntityType.iceBlock =>
+          IceBlock(position: Vector2(e.key.$1 * unit, e.key.$2 * unit)),
+        _ => throw ('ope'),
+      };
+      add(entity);
+    }
     return super.onLoad();
   }
 
+  // @override
+  // void update(double dt) {
+  //   super.update(dt);
+
+  // }
+
   @override
-  void update(double dt) {
-    super.update(dt);
-    accTime += dt;
-    while (accTime > longTick) {
-      _recalculateWater();
-      accTime -= longTick;
-    }
+  void onLongTick() {
+    _recalculateWater();
   }
 
   void _recalculateWater() {

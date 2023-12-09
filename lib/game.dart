@@ -8,12 +8,8 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:hot_cold/actors/player.dart';
 import 'package:hot_cold/models/constants.dart';
-import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
-import 'package:hot_cold/objects/ice_block.dart';
-import 'package:hot_cold/objects/light_crate.dart';
-import 'package:hot_cold/objects/static_block.dart';
 
 class GameClass extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
@@ -39,21 +35,8 @@ class GameClass extends Forge2DGame
 
     player =
         Player(position: Vector2(level.spawn.$1 * unit, level.spawn.$2 * unit));
-    foregroundLayer = ForegroundLayer(
-      blocks: {...level.foreground},
-      water: {...level.water},
-    );
+    foregroundLayer = ForegroundLayer(level: level);
     world.add(foregroundLayer);
     world.add(player);
-    for (final e in level.entities.entries) {
-      final entity = switch (e.value) {
-        EntityType.lightCrate =>
-          LightCrate(position: Vector2(e.key.$1 * unit, e.key.$2 * unit)),
-        EntityType.iceBlock =>
-          IceBlock(position: Vector2(e.key.$1 * unit, e.key.$2 * unit)),
-        _ => throw ('ope'),
-      };
-      world.add(entity);
-    }
   }
 }
