@@ -33,7 +33,9 @@ class GameClass extends Forge2DGame
 
     // cam = CameraComponent(world: world)..viewfinder.anchor = Anchor.topLeft;
     // addAll([cam, world]);
-    camera.viewfinder.zoom = 5;
+    camera.viewfinder.zoom = 7;
+    camera.viewfinder.anchor = Anchor.center;
+
     player =
         Player(position: Vector2(level.spawn.$1 * unit, level.spawn.$2 * unit));
     foregroundLayer = ForegroundLayer(blocks: level.foreground);

@@ -21,18 +21,23 @@ class LevelData {
 LevelData testLevel() => LevelData(
       spawn: (0, -4),
       foreground: {
-        for (int i in List.generate(10, (i) => i))
-          (i - 5, 0): SpritePaths.brick,
-        (2, -1): SpritePaths.brick,
-        for (int i in List.generate(6, (i) => i)) (i - 8, 4): SpritePaths.brick,
-        (-8, 3): SpritePaths.brick,
-        (-8, 2): SpritePaths.brick,
-        (-3, 3): SpritePaths.brick,
-        (-3, 2): SpritePaths.brick,
+        for (int i in List.generate(11, (i) => i))
+          (i - 6, 0): SpritePaths.brick,
+        (7, -1): SpritePaths.brick,
+        for (int i in List.generate(6, (i) => i))
+          (i - -7, 0): SpritePaths.brick,
+
+        (5, 1): SpritePaths.brick,
+        (6, 1): SpritePaths.brick,
+        // (-8, 2): SpritePaths.brick,
+        // (-7, 2): SpritePaths.brick,
+        // (-3, 3): SpritePaths.brick,
+        // (-3, 2): SpritePaths.brick,
       },
       background: {},
       entities: {
         (-2, -4): EntityType.lightCrate,
+        (-4, -4): EntityType.lightCrate,
       },
       water: {
         (-5, 2): 1,

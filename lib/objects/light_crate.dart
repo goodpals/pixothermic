@@ -4,7 +4,7 @@ import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
 
 class LightCrate extends BodyComponent {
-  LightCrate({required Vector2 position, double size = unit * 15 / 16})
+  LightCrate({required Vector2 position, double size = unit * 31 / 32})
       : super(
           fixtureDefs: [
             FixtureDef(

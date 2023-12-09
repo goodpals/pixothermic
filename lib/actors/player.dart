@@ -16,7 +16,7 @@ class Player extends BodyComponent with KeyboardHandler {
   Player({
     required Vector2 position,
     double width = unit / 2,
-    double height = unit,
+    double height = unit * (7 / 8),
   }) : super(
           fixtureDefs: [
             FixtureDef(
