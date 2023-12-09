@@ -45,6 +45,6 @@ LevelData testLevel() => LevelData(
         (-4, -3): EntityType.iceBlock,
       },
       water: {
-        (6, -4): 0.75,
+        (6, -4): 1,
       },
     );

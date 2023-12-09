@@ -56,7 +56,7 @@ class ForegroundLayer extends PositionComponent {
         final belowAmt = newWater[below] ?? 0;
         if (belowAmt < 1) {
           newWater[below] = min(belowAmt + w.value, 1);
-          newWater[here] = max(w.value - newWater[below]!, 0);
+          newWater[here] = max(w.value - (newWater[below]! - belowAmt), 0);
           continue;
         }
       }
@@ -90,7 +90,7 @@ class ForegroundLayer extends PositionComponent {
     for (final e in water.entries) {
       final rect = Rect.fromLTRB(
         e.key.$1 * unit - unit / 2,
-        (e.key.$2 - e.value) * unit,
+        (e.key.$2 - e.value + 0.5) * unit,
         e.key.$1 * unit + unit / 2,
         e.key.$2 * unit + unit / 2,
       );
