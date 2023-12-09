@@ -1,0 +1,1 @@
+typedef IntVec = (int, int);
