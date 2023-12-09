@@ -18,5 +18,11 @@ mixin Heatable on LongTick {
     }
   }
 
+  void heat(double amount) {
+    temperature += amount;
+    tempLock = 10;
+    onTemperatureChange();
+  }
+
   void onTemperatureChange();
 }
