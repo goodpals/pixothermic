@@ -3,7 +3,9 @@ import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
 
 class StaticBlock extends BodyComponent {
-  StaticBlock({required Vector2 position, double size = 8})
+  final String spritePath;
+  StaticBlock(
+      {required Vector2 position, required this.spritePath, double size = 8})
       : super(
           fixtureDefs: [
             FixtureDef(
@@ -22,7 +24,7 @@ class StaticBlock extends BodyComponent {
             type: BodyType.static,
             fixedRotation: true,
           ),
-          children: [StaticSprite(spritePath: SpritePaths.brick, size: size)],
+          children: [StaticSprite(spritePath: spritePath, size: size)],
           renderBody: false,
         );
 }

@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:hot_cold/models/constants.dart';
+import 'package:hot_cold/models/types.dart';
 import 'package:hot_cold/objects/static_block.dart';
 
 class ForegroundLayer extends PositionComponent {
-  final List<(int, int)> blocks;
-  ForegroundLayer({required Vector2 position, required this.blocks})
+  final Map<IntVec, String> blocks;
+  ForegroundLayer({Vector2? position, required this.blocks})
       : super(
           position: position,
           anchor: Anchor.bottomLeft,
@@ -13,8 +15,13 @@ class ForegroundLayer extends PositionComponent {
 
   @override
   FutureOr<void> onLoad() {
-    for (final b in blocks) {
-      add(StaticBlock(position: Vector2(b.$1 * 64, b.$2 * 64)));
+    for (final e in blocks.entries) {
+      add(
+        StaticBlock(
+          position: Vector2(e.key.$1 * unit, e.key.$2 * unit),
+          spritePath: e.value,
+        ),
+      );
     }
     return super.onLoad();
   }

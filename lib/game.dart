@@ -7,6 +7,9 @@ import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:hot_cold/actors/player.dart';
+import 'package:hot_cold/models/constants.dart';
+import 'package:hot_cold/models/entities.dart';
+import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
 import 'package:hot_cold/objects/light_crate.dart';
 import 'package:hot_cold/objects/static_block.dart';
@@ -26,31 +29,23 @@ class GameClass extends Forge2DGame
     await images.loadAll(['blocks/brick.png', 'blocks/crate.png']);
     super.onLoad();
 
-    final visibleRect = camera.visibleWorldRect;
-    final topLeft = visibleRect.topLeft.toVector2();
-    final topRight = visibleRect.topRight.toVector2();
-    final bottomRight = visibleRect.bottomRight.toVector2();
-    final bottomLeft = visibleRect.bottomLeft.toVector2();
-    print(
-        'topLeft: $topLeft, topRight: $topRight, bottomRight: $bottomRight, bottomLeft: $bottomLeft');
+    final level = testLevel();
 
     // cam = CameraComponent(world: world)..viewfinder.anchor = Anchor.topLeft;
     // addAll([cam, world]);
     camera.viewfinder.zoom = 5;
-    player = Player(position: Vector2(8, 12));
-    final blocks = [
-      (0, 0),
-      (-7, 4),
-      ...List.generate(10, (i) => (i - 5, 4)),
-      (4, 6),
-      (2, 3),
-    ];
-    foregroundLayer = ForegroundLayer(position: Vector2(8, 8), blocks: blocks);
-    // world.add(foregroundLayer);
-    for (final b in blocks) {
-      world.add(StaticBlock(position: Vector2(b.$1 * 8, b.$2 * 8)));
-    }
+    player =
+        Player(position: Vector2(level.spawn.$1 * unit, level.spawn.$2 * unit));
+    foregroundLayer = ForegroundLayer(blocks: level.foreground);
+    world.add(foregroundLayer);
     world.add(player);
-    world.add(LightCrate(position: Vector2(0, 12)));
+    for (final e in level.entities.entries) {
+      final entity = switch (e.value) {
+        EntityType.lightCrate =>
+          LightCrate(position: Vector2(e.key.$1 * unit, e.key.$2 * unit)),
+        _ => throw ('ope'),
+      };
+      world.add(entity);
+    }
   }
 }
