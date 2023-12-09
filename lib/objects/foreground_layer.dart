@@ -42,13 +42,10 @@ class ForegroundLayer extends PositionComponent with LongTick {
       );
     }
     for (final e in level.entities.entries) {
+      final pos = Vector2(e.key.$1 * unit, e.key.$2 * unit);
       final entity = switch (e.value) {
-        EntityType.lightCrate =>
-          LightCrate(position: Vector2(e.key.$1 * unit, e.key.$2 * unit)),
-        EntityType.iceBlock => IceBlock(
-            position: Vector2(e.key.$1 * unit, e.key.$2 * unit),
-            onMelt: meltIce,
-          ),
+        EntityType.lightCrate => LightCrate(position: pos),
+        EntityType.iceBlock => IceBlock(position: pos, onMelt: meltIce),
         _ => throw ('ope'),
       };
       add(entity);
