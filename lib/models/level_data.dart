@@ -26,10 +26,15 @@ LevelData testLevel() => LevelData(
         (7, -1): SpritePaths.brick,
         for (int i in List.generate(6, (i) => i))
           (i - -7, 0): SpritePaths.brick,
-
-        (5, 1): SpritePaths.brick,
-        (6, 1): SpritePaths.brick,
+        (4, 1): SpritePaths.brick,
+        (4, 2): SpritePaths.brick,
+        (5, 2): SpritePaths.brick,
+        (6, 2): SpritePaths.brick,
+        (7, 2): SpritePaths.brick,
+        (7, 1): SpritePaths.brick,
+        // (-8, 3): SpritePaths.brick,
         // (-8, 2): SpritePaths.brick,
+        // for (int i in List.generate(6, (i) => i)) (i - 8, 4): SpritePaths.brick,
         // (-7, 2): SpritePaths.brick,
         // (-3, 3): SpritePaths.brick,
         // (-3, 2): SpritePaths.brick,
@@ -40,6 +45,6 @@ LevelData testLevel() => LevelData(
         (-4, -4): EntityType.lightCrate,
       },
       water: {
-        (-5, 2): 1,
+        (6, -4): 0.75,
       },
     );
