@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:hot_cold/models/constants.dart';
@@ -24,5 +25,10 @@ class ForegroundLayer extends PositionComponent {
       );
     }
     return super.onLoad();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
   }
 }

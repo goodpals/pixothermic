@@ -6,17 +6,18 @@ import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hot_cold/game.dart';
-import 'package:hot_cold/objects/foreground_layer.dart';
-import 'package:hot_cold/objects/static_block.dart';
+import 'package:hot_cold/models/constants.dart';
 
 class Player extends BodyComponent with KeyboardHandler {
   int hDir = 0;
 
   // Technically possible for this to be true at the apex of a jump, but w/e.
   bool get isGrounded => body.linearVelocity.y.abs() < 0.1;
-  Player({required Vector2 position, double width = 4, double height = 8})
-      : super(
+  Player({
+    required Vector2 position,
+    double width = unit / 2,
+    double height = unit,
+  }) : super(
           fixtureDefs: [
             FixtureDef(
               PolygonShape()

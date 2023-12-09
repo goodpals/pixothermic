@@ -7,6 +7,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Flame.device.fullScreen();
 
-  runApp(const App());
-  // runApp(const GameWidget<GameClass>.controlled(gameFactory: GameClass.new));
+  // runApp(const App());
+  runApp(const GameWidget<GameClass>.controlled(gameFactory: GameClass.new));
 }
