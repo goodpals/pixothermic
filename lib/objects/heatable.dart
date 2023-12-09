@@ -11,9 +11,12 @@ mixin Heatable on LongTick {
       if (temperature != 0) {
         temperature +=
             temperature > 0 ? -temperatureSubdivision : temperatureSubdivision;
+        onTemperatureChange();
       }
     } else {
       tempLock--;
     }
   }
+
+  void onTemperatureChange();
 }

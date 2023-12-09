@@ -7,8 +7,20 @@ import 'package:hot_cold/objects/static_sprite.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
 class IceBlock extends BodyComponent with LongTick, Heatable {
-  IceBlock({required Vector2 position, double size = unit * 15 / 16})
-      : super(
+  final void Function(IceBlock)? onMelt;
+
+  final StaticSprite sprite;
+
+  IceBlock({
+    required Vector2 position,
+    this.onMelt,
+    double size = unit * 15 / 16,
+  })  : sprite = StaticSprite(
+          spritePath: SpritePaths.crate,
+          size: size,
+          // tintColour: Colors.blue.withOpacity(0.5),
+        ),
+        super(
           fixtureDefs: [
             FixtureDef(
               PolygonShape()
@@ -28,13 +40,20 @@ class IceBlock extends BodyComponent with LongTick, Heatable {
             fixedRotation: true,
             gravityScale: Vector2(0, 2),
           ),
-          children: [
-            StaticSprite(
-              spritePath: SpritePaths.crate,
-              size: size,
-              tintColour: Colors.blue.withOpacity(0.5),
-            )
-          ],
           renderBody: false,
         );
+
+  @override
+  Future<void> onLoad() {
+    add(sprite);
+    return super.onLoad();
+  }
+
+  @override
+  void onTemperatureChange() {
+    sprite.tint(Colors.blue.withOpacity((1 - temperature).clamp(0, 1) * 0.5));
+    if (temperature >= 1.0) {
+      onMelt?.call(this);
+    }
+  }
 }
