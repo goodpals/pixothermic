@@ -9,6 +9,7 @@ import 'package:flutter/material.dart' hide Route;
 import 'package:hot_cold/actors/player.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/level_data.dart';
+import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
 
 class GameClass extends Forge2DGame
@@ -23,14 +24,15 @@ class GameClass extends Forge2DGame
 
   @override
   FutureOr<void> onLoad() async {
-    await images.loadAll(['blocks/brick.png', 'blocks/crate.png']);
+    await images
+        .loadAll([SpritePaths.brick, SpritePaths.crate, SpritePaths.iceblock]);
     super.onLoad();
 
     final level = testLevel();
 
     // cam = CameraComponent(world: world)..viewfinder.anchor = Anchor.topLeft;
     // addAll([cam, world]);
-    camera.viewfinder.zoom = 7;
+    camera.viewfinder.zoom = 5;
     camera.viewfinder.anchor = Anchor.center;
 
     player =

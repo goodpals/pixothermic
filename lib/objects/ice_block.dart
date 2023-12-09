@@ -14,9 +14,9 @@ class IceBlock extends BodyComponent with LongTick, Heatable {
   IceBlock({
     required Vector2 position,
     this.onMelt,
-    double size = unit * 15 / 16,
+    double size = unit * 31 / 32,
   })  : sprite = StaticSprite(
-          spritePath: SpritePaths.crate,
+          spritePath: SpritePaths.iceblock,
           size: size,
           // tintColour: Colors.blue.withOpacity(0.5),
         ),
