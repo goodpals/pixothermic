@@ -33,6 +33,7 @@ LevelData testLevel() => LevelData(
       background: {},
       entities: {
         (-2, -4): EntityType.lightCrate,
+        // (-2, -3): EntityType.lightCrate,
       },
       water: {
         (-5, 2): 1,

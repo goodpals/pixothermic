@@ -36,7 +36,10 @@ class GameClass extends Forge2DGame
     camera.viewfinder.zoom = 5;
     player =
         Player(position: Vector2(level.spawn.$1 * unit, level.spawn.$2 * unit));
-    foregroundLayer = ForegroundLayer(blocks: level.foreground);
+    foregroundLayer = ForegroundLayer(
+      blocks: {...level.foreground},
+      water: {...level.water},
+    );
     world.add(foregroundLayer);
     world.add(player);
     for (final e in level.entities.entries) {
