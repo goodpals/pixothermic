@@ -1,5 +1,6 @@
 enum EntityType {
   lightCrate,
   heavyCrate,
-  metalCrate;
+  metalCrate,
+  iceBlock;
 }
