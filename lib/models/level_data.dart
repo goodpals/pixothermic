@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/sprites.dart';
@@ -13,6 +15,11 @@ class LevelData {
   final num sunAngle;
   final Color sunColour;
   final Color waterColour;
+
+  (int, int) get horizontalConstraints => (leftMostBlock, rightMostBlock);
+
+  int get leftMostBlock => foreground.keys.map((e) => e.$1).reduce(min);
+  int get rightMostBlock => foreground.keys.map((e) => e.$1).reduce(max);
 
   const LevelData({
     required this.spawn,

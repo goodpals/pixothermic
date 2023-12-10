@@ -15,7 +15,6 @@ class ProgressStore extends Cubit<Set<int>> {
   void add(int level) {
     box.put(level, true);
     emit({...state, level});
-    print(state);
   }
 
   void remove(int level) {

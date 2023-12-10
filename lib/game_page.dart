@@ -5,6 +5,7 @@ import 'package:hot_cold/game.dart';
 import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/levels.dart';
+import 'package:hot_cold/widgets/settings_dialog.dart';
 
 class GamePage extends StatefulWidget {
   final int? levelId;
@@ -21,7 +22,7 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  late GameClass game = GameClass(widget.level, onWin: _onWin);
+  late GameClass game = _makeGame();
 
   void _onWin() {
     if (widget.levelId != null) {
@@ -29,91 +30,123 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
-  void _resetGame() =>
-      setState(() => game = GameClass(widget.level, onWin: _onWin));
+  GameClass _makeGame() => GameClass(widget.level, onWin: _onWin)
+    ..rayDensity = settings().rayDensity;
+
+  void _resetGame() => setState(() => game = _makeGame());
+
+  void _adjustRayDensity(double density) {
+    setState(() => game.rayDensity = density);
+    _focusNode.requestFocus();
+    settings().setRayDensity(density);
+  }
 
   int? get nextLevelId =>
       campaignLevelPaths.length > widget.levelId! ? widget.levelId! + 1 : null;
 
+  final _focusScopeNode = FocusScopeNode();
+  final _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        title: Row(
-          children: [
+    return FocusScope(
+      node: _focusScopeNode,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: const BackButton(),
+          title: Row(
+            children: [
+              IconButton(
+                onPressed: _resetGame,
+                icon: const Icon(Icons.refresh),
+              ),
+            ],
+          ),
+          actions: [
             IconButton(
-              onPressed: _resetGame,
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(Icons.settings),
+              onPressed: () async {
+                final rd = await showDialog(
+                  context: context,
+                  builder: (context) =>
+                      SettingsDialog(rayDensity: game.rayDensity),
+                );
+                if (rd != null) {
+                  _adjustRayDensity(rd);
+                }
+              },
             ),
           ],
         ),
-      ),
-      body: Center(
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(
-                'assets/images/backgrounds/cave_background_three.png',
+        body: Center(
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                  'assets/images/backgrounds/cave_background_three.png',
+                ),
               ),
             ),
-          ),
-          child: GameWidget<GameClass>(
-            game: game,
-            overlayBuilderMap: {
-              'WonDialog': (context, game) {
-                return Center(
-                  child: AlertDialog(
-                    title: const Center(child: Text('🎉🎉🎉')),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        icon: const Icon(Icons.home),
+            child: Focus(
+              child: GameWidget<GameClass>(
+                focusNode: _focusNode,
+                game: game,
+                overlayBuilderMap: {
+                  'WonDialog': (context, game) {
+                    return Center(
+                      child: AlertDialog(
+                        title: const Center(child: Text('🎉🎉🎉')),
+                        actions: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            icon: const Icon(Icons.home),
+                          ),
+                          if (nextLevelId != null)
+                            IconButton(
+                              onPressed: () async {
+                                final level = await levelStore()
+                                    .loadCampaignLevel(context, nextLevelId!);
+                                if (!mounted) return;
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (_) => GamePage(
+                                      level: level,
+                                      levelId: nextLevelId!,
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.arrow_right_alt),
+                            ),
+                        ],
                       ),
-                      if (nextLevelId != null)
-                        IconButton(
-                          onPressed: () async {
-                            final level = await levelStore()
-                                .loadCampaignLevel(context, nextLevelId!);
-                            if (!mounted) return;
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => GamePage(
-                                  level: level,
-                                  levelId: nextLevelId!,
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.arrow_right_alt),
-                        ),
-                    ],
-                  ),
-                );
-              },
-              'LostDialog': (context, game) {
-                return Center(
-                  child: AlertDialog(
-                    title: const Center(child: Text('😢😢😢')),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        icon: const Icon(Icons.home),
+                    );
+                  },
+                  'LostDialog': (context, game) {
+                    return Center(
+                      child: AlertDialog(
+                        title: const Center(child: Text('😢😢😢')),
+                        actions: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            icon: const Icon(Icons.home),
+                          ),
+                          IconButton(
+                            onPressed: _resetGame,
+                            icon: const Icon(Icons.refresh),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        onPressed: _resetGame,
-                        icon: const Icon(Icons.refresh),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            },
+                    );
+                  },
+                },
+              ),
+            ),
           ),
         ),
       ),

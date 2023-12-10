@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -9,7 +11,6 @@ import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/end_portal.dart';
-import 'package:hot_cold/objects/background.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
 import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/reflective.dart';
@@ -27,6 +28,9 @@ class GameClass extends Forge2DGame
   bool dragging = false;
   bool enableSun = true;
   bool lockCamera = true;
+
+  late final (int, int) hConstraints = level.horizontalConstraints;
+  double rayDensity = 50;
 
   @override
   Color backgroundColor() => Colors.transparent;
@@ -110,9 +114,14 @@ class GameClass extends Forge2DGame
   }
 
   void _praiseTheSun() {
+    final width = hConstraints.$2 - hConstraints.$1 + sunAngle.abs();
+    final raySpacing = unit / rayDensity;
+
     final st = DateTime.now().microsecondsSinceEpoch;
-    const nRays = 5000;
-    final xPoints = List.generate(nRays, (i) => (i - nRays / 2) * 0.02 * unit);
+    final nRays = (width * rayDensity).ceil();
+    // print('nRays: $nRays, width: $width');
+    final xPoints = List.generate(
+        nRays, (i) => (i - nRays / 2) * raySpacing + hConstraints.$1);
     final results = xPoints
         .map((e) => _castRay(
               Vector2(e, -sunHeight),
