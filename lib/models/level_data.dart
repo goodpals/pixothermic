@@ -29,8 +29,17 @@ LevelData testLevel() => LevelData(
 
         //main platforms
         (-7, 0): SpritePaths.leftBasePiece,
-        for (int i in List.generate(10, (i) => i))
+        for (int i in List.generate(2, (i) => i))
           (i - 6, 0): SpritePaths.middleBasePiece,
+        for (int i in List.generate(5, (i) => i))
+          (i - 1, 0): SpritePaths.middleBasePiece,
+        for (int i in List.generate(3, (i) => i))
+          (-5, i + 1): SpritePaths.brick,
+        for (int i in List.generate(3, (i) => i))
+          (-1, i + 1): SpritePaths.brick,
+        for (int i in List.generate(2, (i) => i)) (i - 5, 4): SpritePaths.brick,
+        for (int i in List.generate(2, (i) => i)) (i - 2, 4): SpritePaths.brick,
+        (-3, 4): SpritePaths.grate,
         (4, 0): SpritePaths.rightBasePiece,
         (7, -1): SpritePaths.brick,
         for (int i in List.generate(6, (i) => i))
@@ -44,9 +53,11 @@ LevelData testLevel() => LevelData(
       },
       background: {},
       entities: {
-        (-5, -1): EntityType.heavyCrate,
-        (-3, -4): EntityType.lightCrate,
+        // (-5, -1): EntityType.heavyCrate,
         (-1, -3): EntityType.metalCrate,
+        (1, -3): EntityType.lightCrate,
+        for (int i in List.generate(9, (i) => i))
+          ((i % 3) - 4, 3 - (i ~/ 3)): EntityType.iceBlock,
       },
       water: {
         (6, -1): 5,

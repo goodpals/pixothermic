@@ -3,9 +3,11 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:hot_cold/game.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
+import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
 import 'package:hot_cold/objects/floatable.dart';
 import 'package:hot_cold/objects/heavy_crate.dart';
@@ -15,7 +17,8 @@ import 'package:hot_cold/objects/metal_crate.dart';
 import 'package:hot_cold/objects/static_block.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
-class ForegroundLayer extends PositionComponent with LongTick {
+class ForegroundLayer extends PositionComponent
+    with LongTick, HasGameRef<GameClass> {
   final LevelData level;
 
   Map<IntVec, String> blocks;
@@ -103,7 +106,7 @@ class ForegroundLayer extends PositionComponent with LongTick {
     for (final w in water.entries) {
       final here = w.key;
       final below = w.key.down;
-      if (!hasBlock(below)) {
+      if (!hasBlock(below) || SpritePaths.isPermeable(blocks[below]!)) {
         final belowAmt = newWater[below] ?? 0;
         if (belowAmt < 1) {
           newWater[below] = min(belowAmt + w.value, 1);

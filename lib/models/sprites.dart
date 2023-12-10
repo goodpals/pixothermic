@@ -14,4 +14,28 @@ class SpritePaths {
   static const leftPlatPiece = 'blocks/left_platform_piece.png';
   static const midPlatPiece = 'blocks/mid_platform_piece.png';
   static const rightPlatPiece = 'blocks/right_platform_piece.png';
+  static const grate = 'blocks/grate.png';
+
+  static const all = [
+    leftBasePiece,
+    brick,
+    middleBasePiece,
+    rightBasePiece,
+    subsurfBasePiece,
+    leftPlatPiece,
+    midPlatPiece,
+    rightPlatPiece,
+    crate,
+    heavyCrate,
+    metalCrate,
+    iceblock,
+    singleTree,
+    trees,
+    stone,
+    grate,
+  ];
+
+  static const permeable = [grate];
+
+  static bool isPermeable(String path) => permeable.contains(path);
 }

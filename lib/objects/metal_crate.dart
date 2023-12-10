@@ -12,7 +12,7 @@ class MetalCrate extends BodyComponent with LongTick, Heatable {
 
   MetalCrate({
     required Vector2 position,
-    this.size = unit * 31 / 32,
+    this.size = unit * 7 / 8,
   })  : sprite = StaticSprite(
           spritePath: SpritePaths.metalCrate,
           size: size,
@@ -49,6 +49,23 @@ class MetalCrate extends BodyComponent with LongTick, Heatable {
   }
 
   @override
+  void onLongTick() {
+    if (temperature > 0) {
+      final heatables = body.contacts
+          .where((e) => e.isTouching())
+          .map((e) => [e.fixtureA.userData, e.fixtureB.userData])
+          .expand((e) => e)
+          .whereType<Heatable>()
+          .toSet()
+        ..remove(this);
+      for (final h in heatables) {
+        heatOther(h, heatTransferRate);
+      }
+    }
+    super.onLongTick();
+  }
+
+  @override
   void onTemperatureChange() {
     sprite.tint(Colors.deepOrange.withOpacity(temperature.clamp(0, 4) * 0.125));
   }
@@ -60,5 +77,11 @@ class MetalCrate extends BodyComponent with LongTick, Heatable {
   final double heatDissipationRate = .2;
 
   @override
+  final double heatAbsorptionRate = 2.0;
+
+  @override
   final (double, double) tempRange = (-1, 4);
+
+  @override
+  String toString() => 'MetalCrate';
 }

@@ -17,7 +17,7 @@ class GameClass extends Forge2DGame
   late final RouterComponent router;
 
   static const double sunHeight = 200;
-  double sunAngle = 125;
+  double sunAngle = -100;
   double timeElapsed = 0;
 
   bool dragging = false;
@@ -33,23 +33,7 @@ class GameClass extends Forge2DGame
 
   @override
   FutureOr<void> onLoad() async {
-    await images.loadAll([
-      SpritePaths.brick,
-      SpritePaths.leftBasePiece,
-      SpritePaths.middleBasePiece,
-      SpritePaths.rightBasePiece,
-      SpritePaths.subsurfBasePiece,
-      SpritePaths.leftPlatPiece,
-      SpritePaths.midPlatPiece,
-      SpritePaths.rightPlatPiece,
-      SpritePaths.crate,
-      SpritePaths.heavyCrate,
-      SpritePaths.metalCrate,
-      SpritePaths.iceblock,
-      SpritePaths.singleTree,
-      SpritePaths.trees,
-      SpritePaths.stone
-    ]);
+    await images.loadAll([...SpritePaths.all]);
     super.onLoad();
 
     // change to test each level at moment
@@ -76,7 +60,7 @@ class GameClass extends Forge2DGame
     // sunAngle = 200 * sin(timeElapsed);
     _praiseTheSun();
     for (final h in heatables) {
-      h.heat(dt * heatTransferRate);
+      h.heat(dt * heatTransferRate * h.heatAbsorptionRate);
     }
     // camera.moveBy(Vector2(0, 0.1));
     if (player.isLoaded) {

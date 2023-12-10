@@ -9,7 +9,7 @@ class Player extends BodyComponent with KeyboardHandler {
 
   bool get isGrounded => body.contacts.any((e) =>
       e.isTouching() &&
-      (e.fixtureA.userData == 'feet' || e.fixtureB.userData == 'feet'));
+      (e.fixtureA.userData == Flags.feet || e.fixtureB.userData == Flags.feet));
 
   Player({
     required Vector2 position,
@@ -38,7 +38,7 @@ class Player extends BodyComponent with KeyboardHandler {
                   Vector2(-1, height / 2 + 0.5),
                 ]),
               isSensor: true,
-              userData: 'feet',
+              userData: Flags.feet,
             ),
           ],
           bodyDef: BodyDef(

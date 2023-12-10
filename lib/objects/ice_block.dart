@@ -56,8 +56,11 @@ class IceBlock extends BodyComponent with LongTick, Heatable, Floatable {
   @override
   void onTemperatureChange() {
     sprite.tint(Colors.blue.withOpacity((1 - temperature).clamp(0, 1) * 0.5));
-    if (temperature >= 1.0) {
+    if (temperature >= tempRange.$2) {
       onMelt?.call(this);
     }
   }
+
+  @override
+  String toString() => 'IceBlock';
 }
