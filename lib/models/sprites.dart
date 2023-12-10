@@ -12,7 +12,8 @@ class SpritePaths {
   static const subsurfBasePiece = 'blocks/subsurf_base_piece.png';
   static const crate = 'blocks/crate.png';
   static const heavyCrate = 'blocks/heavy_crate.png';
-  static const iceblock = 'blocks/iceblock.png';
+  static const iceBlock = 'blocks/iceblock.png';
+  static const mirror = 'blocks/mirror.png';
   static const metalCrate = 'blocks/metal_box.png';
   static const singleTree = 'blocks/tree.png';
   static const trees = 'blocks/trees.png';
@@ -22,8 +23,10 @@ class SpritePaths {
   static const rightPlatPiece = 'blocks/right_platform_piece.png';
   static const grate = 'blocks/grate.png';
 
-  static const all = [
-    leftBasePiece,
+  static const spawn = 'blocks/spawn.png';
+  static const goal = 'blocks/exit.png';
+
+  static const foregroundTiles = [
     brick,
     brick1,
     brick2,
@@ -31,20 +34,28 @@ class SpritePaths {
     brick4,
     dirt1,
     dirt2,
+    leftBasePiece,
     middleBasePiece,
     rightBasePiece,
     subsurfBasePiece,
     leftPlatPiece,
     midPlatPiece,
     rightPlatPiece,
+    stone,
+    grate,
+  ];
+
+  static const all = [
+    ...foregroundTiles,
     crate,
     heavyCrate,
     metalCrate,
-    iceblock,
+    iceBlock,
+    mirror,
     singleTree,
     trees,
-    stone,
-    grate,
+    spawn,
+    goal,
   ];
 
   static const permeable = [grate];

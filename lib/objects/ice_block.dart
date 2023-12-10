@@ -20,7 +20,7 @@ class IceBlock extends BodyComponent
     this.onMelt,
     this.size = unit * 31 / 32,
   })  : sprite = StaticSprite(
-          spritePath: SpritePaths.iceblock,
+          spritePath: SpritePaths.iceBlock,
           size: size,
           // tintColour: Colors.blue.withOpacity(0.5),
         ),

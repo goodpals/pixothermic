@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart' hide Route, DragTarget;
 import 'package:hot_cold/actors/player.dart';
@@ -17,12 +16,13 @@ class GameClass extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
   final LevelData level;
   GameClass(this.level);
-  late final RouterComponent router;
 
   late double sunAngle = level.sunAngle;
   double timeElapsed = 0;
 
   bool dragging = false;
+  bool enableSun = true;
+  bool lockCamera = true;
 
   @override
   Color backgroundColor() => Colors.blueGrey;
@@ -56,20 +56,22 @@ class GameClass extends Forge2DGame
   void update(double dt) {
     timeElapsed += dt;
     // sunAngle = 200 * sin(timeElapsed);
-    _praiseTheSun();
-    for (final h in heatables) {
-      h.heat(dt * heatTransferRate * h.heatAbsorptionRate);
+    if (enableSun) {
+      _praiseTheSun();
+      for (final h in heatables) {
+        h.heat(dt * heatTransferRate * h.heatAbsorptionRate);
+      }
     }
-    // camera.moveBy(Vector2(0, 0.1));
-    if (player.isLoaded) {
+    if (player.isLoaded && lockCamera) {
       camera.moveTo(player.position);
     }
     super.update(dt);
   }
 
-  late final _lightPaints = List.generate(
-          10, (i) => Paint()..color = level.sunColour.withOpacity((i + 1) / 20))
-      .toList();
+  late final List<Paint> _lightPaints = _buildLightPaints(level.sunColour);
+
+  List<Paint> _buildLightPaints(Color colour) => List.generate(
+      10, (i) => Paint()..color = colour.withOpacity((i + 1) / 20));
 
   @override
   void render(Canvas canvas) {

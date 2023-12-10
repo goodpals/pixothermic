@@ -57,6 +57,7 @@ class ForegroundLayer extends PositionComponent
         EntityType.metalCrate => MetalCrate(position: pos),
         EntityType.iceBlock => IceBlock(position: pos, onMelt: meltIce),
         EntityType.mirror => Mirror(position: pos),
+        _ => throw UnimplementedError(),
       };
       add(entity);
     }

@@ -1,5 +1,7 @@
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:hot_cold/models/constants.dart';
+import 'package:hot_cold/models/sprites.dart';
+import 'package:hot_cold/objects/static_sprite.dart';
 import 'package:hot_cold/utils/reflective.dart';
 
 class Mirror extends BodyComponent with Reflective {
@@ -11,7 +13,8 @@ class Mirror extends BodyComponent with Reflective {
             type: BodyType.dynamic,
             fixedRotation: true,
           ),
-          renderBody: true,
+          children: [StaticSprite(spritePath: SpritePaths.mirror)],
+          renderBody: false,
         );
 
   @override

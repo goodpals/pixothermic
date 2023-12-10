@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hot_cold/game_page.dart';
 import 'package:hot_cold/models/level_data.dart';
-import 'package:hot_cold/pages/editor_page.dart';
-import 'package:hot_cold/pages/game_page.dart';
+import 'package:hot_cold/editor/editor_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
