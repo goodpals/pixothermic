@@ -1,7 +1,7 @@
 # Pixothermic
 
 Made for the [Flame Jam 3.0](https://itch.io/jam/flame-jam-3) in 2 days.
-By @alexobviously and @thebeville
+By [@alexobviously](https://github.com/alexobviously) and [@thebeville](https://github.com/TheBeville).
 
 Theme: hot and cold.
 Limitation: no text. There is some text in the level editor but the game itself contains none.
