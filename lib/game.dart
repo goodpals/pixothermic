@@ -8,6 +8,7 @@ import 'package:hot_cold/actors/player.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
+import 'package:hot_cold/objects/end_portal.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
 import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/reflective.dart';
@@ -25,9 +26,10 @@ class GameClass extends Forge2DGame
   bool lockCamera = true;
 
   @override
-  Color backgroundColor() => Colors.blueGrey;
+  Color backgroundColor() => Colors.transparent;
   late final CameraComponent cam;
   late Player player;
+  late EndPortal portal;
   late ForegroundLayer foregroundLayer;
 
   List<(Vector2, Vector2, double)> light = [];
@@ -45,9 +47,14 @@ class GameClass extends Forge2DGame
 
     player =
         Player(position: Vector2(level.spawn.$1 * unit, level.spawn.$2 * unit));
+    portal = EndPortal(
+      position: Vector2(level.goal.$1 * unit, level.goal.$2 * unit),
+      onWin: _onWin,
+    );
     foregroundLayer = ForegroundLayer(level: level);
     world.add(foregroundLayer);
     world.add(player);
+    world.add(portal);
     world.add(
         FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)));
   }
@@ -67,6 +74,8 @@ class GameClass extends Forge2DGame
     }
     super.update(dt);
   }
+
+  void _onWin() {}
 
   late final List<Paint> _lightPaints = _buildLightPaints(level.sunColour);
 

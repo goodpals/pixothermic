@@ -3,44 +3,23 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hot_cold/models/constants.dart';
+import 'package:hot_cold/objects/end_portal.dart';
 
-class Player extends BodyComponent with KeyboardHandler {
+class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   int hDir = 0;
 
   bool get isGrounded => body.contacts.any((e) =>
       e.isTouching() &&
       (e.fixtureA.userData == Flags.feet || e.fixtureB.userData == Flags.feet));
 
+  final double width;
+  final double height;
+
   Player({
     required Vector2 position,
-    double width = unit / 2,
-    double height = unit * (7 / 8),
+    this.width = unit / 2,
+    this.height = unit * (7 / 8),
   }) : super(
-          fixtureDefs: [
-            FixtureDef(
-              PolygonShape()
-                ..set([
-                  Vector2(-width / 2, -height / 2),
-                  Vector2(-width / 2, height / 2),
-                  Vector2(width / 2, height / 2),
-                  Vector2(width / 2, -height / 2),
-                ]),
-              // restitution: 0.8,
-              friction: 0.2,
-              density: 1,
-            ),
-            FixtureDef(
-              PolygonShape()
-                ..set([
-                  Vector2(-1, height / 2),
-                  Vector2(1, height / 2),
-                  Vector2(1, height / 2 + 0.5),
-                  Vector2(-1, height / 2 + 0.5),
-                ]),
-              isSensor: true,
-              userData: Flags.feet,
-            ),
-          ],
           bodyDef: BodyDef(
             position: position,
             type: BodyType.dynamic,
@@ -51,6 +30,37 @@ class Player extends BodyComponent with KeyboardHandler {
           children: [PlayerImage(Vector2(width, height))],
           renderBody: false,
         );
+
+  @override
+  Future<void> onLoad() {
+    fixtureDefs = [
+      FixtureDef(
+        PolygonShape()
+          ..set([
+            Vector2(-width / 2, -height / 2),
+            Vector2(-width / 2, height / 2),
+            Vector2(width / 2, height / 2),
+            Vector2(width / 2, -height / 2),
+          ]),
+        // restitution: 0.8,
+        friction: 0.2,
+        density: 1,
+        userData: this,
+      ),
+      FixtureDef(
+        PolygonShape()
+          ..set([
+            Vector2(-1, height / 2),
+            Vector2(1, height / 2),
+            Vector2(1, height / 2 + 0.5),
+            Vector2(-1, height / 2 + 0.5),
+          ]),
+        isSensor: true,
+        userData: Flags.feet,
+      ),
+    ];
+    return super.onLoad();
+  }
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {

@@ -10,4 +10,5 @@ const lightReflectionCutoff = 0.05;
 abstract class Flags {
   static const feet = 'feet';
   static const permeable = 'permeable';
+  static const portal = 'portal';
 }
