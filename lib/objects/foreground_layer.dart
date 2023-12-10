@@ -9,7 +9,7 @@ import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
-import 'package:hot_cold/objects/buoyant.dart';
+import 'package:hot_cold/utils/buoyant.dart';
 import 'package:hot_cold/objects/heavy_crate.dart';
 import 'package:hot_cold/objects/ice_block.dart';
 import 'package:hot_cold/objects/light_crate.dart';

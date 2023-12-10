@@ -10,8 +10,8 @@ import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
-import 'package:hot_cold/objects/heatable.dart';
-import 'package:hot_cold/objects/reflective.dart';
+import 'package:hot_cold/utils/heatable.dart';
+import 'package:hot_cold/utils/reflective.dart';
 
 class GameClass extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {

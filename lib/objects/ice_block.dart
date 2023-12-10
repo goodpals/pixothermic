@@ -2,9 +2,9 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/sprites.dart';
-import 'package:hot_cold/objects/buoyant.dart';
-import 'package:hot_cold/objects/heatable.dart';
-import 'package:hot_cold/objects/reflective.dart';
+import 'package:hot_cold/utils/buoyant.dart';
+import 'package:hot_cold/utils/heatable.dart';
+import 'package:hot_cold/utils/reflective.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
