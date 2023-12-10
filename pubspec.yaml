@@ -8,6 +8,7 @@ environment:
   sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
+  audioplayers: ^5.2.1
   bloc: ^8.1.2
   elegant: ^0.0.3
   equatable: ^2.0.5
@@ -35,3 +36,4 @@ flutter:
     - assets/images/blocks/
     - assets/images/backgrounds/
     - assets/levels/
+    - assets/music.mp3

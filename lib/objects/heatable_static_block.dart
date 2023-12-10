@@ -27,6 +27,7 @@ class HeatableStaticBlock extends BodyComponent
             position: position,
             type: BodyType.dynamic,
             fixedRotation: true,
+            gravityOverride: Vector2.zero(),
           ),
           renderBody: false,
         );

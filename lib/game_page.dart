@@ -42,7 +42,9 @@ class _GamePageState extends State<GamePage> {
   }
 
   int? get nextLevelId =>
-      campaignLevelPaths.length > widget.levelId! ? widget.levelId! + 1 : null;
+      (widget.levelId != null && campaignLevelPaths.length > widget.levelId!)
+          ? widget.levelId! + 1
+          : null;
 
   final _focusScopeNode = FocusScopeNode();
   final _focusNode = FocusNode();

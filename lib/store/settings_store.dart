@@ -11,6 +11,6 @@ class SettingsStore {
     box = await Hive.openBox('settings');
   }
 
-  double get rayDensity => box.get('rayDensity', defaultValue: 64.0);
+  double get rayDensity => box.get('rayDensity', defaultValue: 48.0);
   void setRayDensity(double density) => box.put('rayDensity', density);
 }

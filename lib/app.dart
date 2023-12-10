@@ -6,8 +6,19 @@ import 'package:hot_cold/home_page.dart';
 import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/store/progress_store.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void initState() {
+    music().playMusicLoop();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

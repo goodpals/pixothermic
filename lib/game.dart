@@ -118,8 +118,8 @@ class GameClass extends Forge2DGame
     final raySpacing = unit / rayDensity;
 
     final st = DateTime.now().microsecondsSinceEpoch;
-    final nRays = (width * rayDensity).ceil();
-    // print('nRays: $nRays, width: $width');
+    final nRays = (width * unit * rayDensity).ceil();
+    // print('nRays: $nRays, width: $width, $hConstraints');
     final xPoints = List.generate(
         nRays, (i) => (i - nRays / 2) * raySpacing + hConstraints.$1);
     final results = xPoints

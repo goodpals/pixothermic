@@ -34,6 +34,10 @@ class _HomePageState extends State<HomePage> {
             onPressed: () => context.read<ProgressStore>().clear(),
             icon: const Icon(Icons.delete),
           ),
+          IconButton(
+            onPressed: () => music().toggleMusic(),
+            icon: const Icon(Icons.music_note),
+          ),
         ],
       ),
       body: Center(

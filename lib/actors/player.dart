@@ -60,7 +60,7 @@ class Player extends BodyComponent
           ]),
         // restitution: 0.8,
         friction: 0.2,
-        density: 1,
+        density: 0.8,
         userData: this,
       ),
       FixtureDef(
@@ -80,6 +80,7 @@ class Player extends BodyComponent
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (dead) return false;
     hDir = 0;
 
     final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||

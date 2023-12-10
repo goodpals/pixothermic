@@ -5,7 +5,8 @@ const campaignLevelPaths = [
   'pool.json',
   'mirror_intro.json',
   'acid_jump.json',
-  'float_jumps.json',
+  // 'float_jumps.json',
   'basin.json',
   'melt_to_raise.json',
+  'well.json',
 ];
