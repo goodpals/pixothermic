@@ -50,7 +50,6 @@ class ForegroundLayer extends PositionComponent with LongTick {
         EntityType.heavyCrate => HeavyCrate(position: pos),
         EntityType.metalCrate => MetalCrate(position: pos),
         EntityType.iceBlock => IceBlock(position: pos, onMelt: meltIce),
-        _ => throw ('ope'),
       };
       add(entity);
     }
@@ -63,7 +62,7 @@ class ForegroundLayer extends PositionComponent with LongTick {
       (ice.body.position.x / unit).round(),
       (ice.body.position.y / unit).round()
     );
-    water[pos] = (water[pos] ?? 0) + 0.5;
+    water[pos] = (water[pos] ?? 0) + 1;
   }
 
   // @override

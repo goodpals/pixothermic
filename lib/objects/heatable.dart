@@ -6,23 +6,25 @@ mixin Heatable on LongTick {
   int tempLock = 0;
   int get tempHoldTicks => 10;
   double get heatDissipationRate => 1.0;
+  (double, double) get tempRange => (-1, 1);
 
   @override
   void onLongTick() {
     if (tempLock == 0) {
       if (temperature != 0) {
-        temperature += temperature > 0
-            ? -temperatureSubdivision * heatDissipationRate
-            : temperatureSubdivision * heatDissipationRate;
+        temperature +=
+            temperature > 0 ? -temperatureSubdivision : temperatureSubdivision;
+        if (temperature.abs() < temperatureSubdivision) temperature = 0;
         onTemperatureChange();
       }
     } else {
       tempLock--;
     }
+    print((tempLock, temperature));
   }
 
   void heat(double amount) {
-    temperature += amount;
+    temperature = (temperature + amount).clamp(tempRange.$1, tempRange.$2);
     tempLock = tempHoldTicks;
     onTemperatureChange();
   }

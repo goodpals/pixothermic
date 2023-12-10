@@ -53,8 +53,8 @@ class GameClass extends Forge2DGame
     super.onLoad();
 
     // change to test each level at moment
-    // final level = testLevel();
-    final level = levelOne();
+    final level = testLevel();
+    // final level = levelOne();
 
     // cam = CameraComponent(world: world)..viewfinder.anchor = Anchor.topLeft;
     // addAll([cam, world]);

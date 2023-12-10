@@ -1,4 +1,5 @@
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/material.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/heatable.dart';
@@ -43,16 +44,21 @@ class MetalCrate extends BodyComponent with LongTick, Heatable {
         userData: this,
       ),
     ];
+    add(sprite);
     return super.onLoad();
   }
 
   @override
   void onTemperatureChange() {
-    // TODO: implement onTemperatureChange
-    // also, sprite isn't showing - looks like only the shadow is showing
-    // sprite.tint(Colors.red.withOpacity((1 - temperature).clamp(0, 1) * 0.5));
+    sprite.tint(Colors.deepOrange.withOpacity(temperature.clamp(0, 4) * 0.125));
   }
 
-  // @override
-  // double accTime;
+  @override
+  final int tempHoldTicks = 40;
+
+  @override
+  final double heatDissipationRate = .2;
+
+  @override
+  final (double, double) tempRange = (-1, 4);
 }

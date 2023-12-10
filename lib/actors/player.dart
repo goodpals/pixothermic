@@ -77,9 +77,6 @@ class Player extends BodyComponent with KeyboardHandler {
 
   @override
   void update(double dt) {
-    print(body.contacts
-        .map((e) => (e.fixtureA.userData, e.fixtureB.userData))
-        .toList());
     if (hDir != 0) {
       body.applyLinearImpulse(
         Vector2(hDir * dt * (isGrounded ? 2000 : 500), 0),
