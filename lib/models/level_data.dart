@@ -23,15 +23,17 @@ class LevelData {
     this.entities = const {},
     this.water = const {},
     this.sunHeight = 200,
-    this.sunAngle = -100,
+    this.sunAngle = 0,
     this.sunColour = Colors.amber,
-    this.waterColour = Colors.lightBlue,
+    this.waterColour = Colors.indigo,
   });
 }
 
 LevelData testLevel() => LevelData(
       spawn: (0, -4),
       sunColour: Colors.amber.shade400,
+      waterColour: Colors.indigo.shade400,
+      sunAngle: 100,
       foreground: {
         // upper platforms
         for (int i in List.generate(6, (i) => i))
@@ -46,22 +48,24 @@ LevelData testLevel() => LevelData(
         for (int i in List.generate(5, (i) => i))
           (i - 1, 0): SpritePaths.middleBasePiece,
         for (int i in List.generate(3, (i) => i))
-          (-5, i + 1): SpritePaths.brick,
+          (-5, i + 1): SpritePaths.brick1,
         for (int i in List.generate(3, (i) => i))
-          (-1, i + 1): SpritePaths.brick,
-        for (int i in List.generate(2, (i) => i)) (i - 5, 4): SpritePaths.brick,
-        for (int i in List.generate(2, (i) => i)) (i - 2, 4): SpritePaths.brick,
+          (-1, i + 1): SpritePaths.brick2,
+        for (int i in List.generate(2, (i) => i))
+          (i - 5, 4): SpritePaths.brick3,
+        for (int i in List.generate(2, (i) => i))
+          (i - 2, 4): SpritePaths.brick4,
         (-3, 4): SpritePaths.grate,
         (4, 0): SpritePaths.rightBasePiece,
         (7, -1): SpritePaths.brick,
         for (int i in List.generate(6, (i) => i))
           (i - -7, 0): SpritePaths.brick,
-        (4, 1): SpritePaths.subsurfBasePiece,
-        (4, 2): SpritePaths.subsurfBasePiece,
-        (5, 2): SpritePaths.subsurfBasePiece,
-        (6, 2): SpritePaths.subsurfBasePiece,
-        (7, 2): SpritePaths.subsurfBasePiece,
-        (7, 1): SpritePaths.subsurfBasePiece,
+        (4, 1): SpritePaths.dirt1,
+        (4, 2): SpritePaths.dirt2,
+        (5, 2): SpritePaths.dirt1,
+        (6, 2): SpritePaths.dirt2,
+        (7, 2): SpritePaths.dirt1,
+        (7, 1): SpritePaths.dirt2,
       },
       background: {},
       entities: {

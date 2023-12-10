@@ -15,10 +15,11 @@ import 'package:hot_cold/utils/reflective.dart';
 
 class GameClass extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
+  final LevelData level;
+  GameClass(this.level);
   late final RouterComponent router;
 
-  static const double sunHeight = 200;
-  double sunAngle = 200;
+  late double sunAngle = level.sunAngle;
   double timeElapsed = 0;
 
   bool dragging = false;
@@ -36,10 +37,6 @@ class GameClass extends Forge2DGame
   FutureOr<void> onLoad() async {
     await images.loadAll([...SpritePaths.all]);
     super.onLoad();
-
-    // change to test each level at moment
-    final level = testLevel();
-    // final level = levelOne();
 
     // cam = CameraComponent(world: world)..viewfinder.anchor = Anchor.topLeft;
     // addAll([cam, world]);
@@ -70,14 +67,9 @@ class GameClass extends Forge2DGame
     super.update(dt);
   }
 
-  final _lightPaint = Paint()
-    ..color = Colors.yellow.shade300.withOpacity(0.1)
-    ..strokeWidth = 1;
-
-  final _lightPaints = List.generate(
-      10,
-      (i) => Paint()
-        ..color = Colors.amber.shade400.withOpacity((i + 1) / 20)).toList();
+  late final _lightPaints = List.generate(
+          10, (i) => Paint()..color = level.sunColour.withOpacity((i + 1) / 20))
+      .toList();
 
   @override
   void render(Canvas canvas) {
@@ -99,8 +91,10 @@ class GameClass extends Forge2DGame
     const nRays = 2000;
     final xPoints = List.generate(nRays, (i) => (i - nRays / 2) * 0.02 * unit);
     final results = xPoints
-        .map((e) =>
-            _castRay(Vector2(e, -sunHeight), Vector2(e + sunAngle, sunHeight)))
+        .map((e) => _castRay(
+              Vector2(e, -level.sunHeight),
+              Vector2(e + sunAngle, level.sunHeight),
+            ))
         .expand((e) => e)
         .toList();
     light = results.map((e) => e.$1).toList();

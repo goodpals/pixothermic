@@ -172,5 +172,5 @@ class ForegroundLayer extends PositionComponent
     }
   }
 
-  final _waterPaint = Paint()..color = Colors.lightBlue;
+  late final _waterPaint = Paint()..color = level.waterColour;
 }

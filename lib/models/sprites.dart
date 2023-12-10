@@ -1,5 +1,11 @@
 class SpritePaths {
   static const brick = 'blocks/brick.png';
+  static const brick1 = 'blocks/brick1.png';
+  static const brick2 = 'blocks/brick2.png';
+  static const brick3 = 'blocks/brick3.png';
+  static const brick4 = 'blocks/brick4.png';
+  static const dirt1 = 'blocks/dirt1.png';
+  static const dirt2 = 'blocks/dirt2.png';
   static const leftBasePiece = 'blocks/left_base_piece.png';
   static const middleBasePiece = 'blocks/middle_base_piece.png';
   static const rightBasePiece = 'blocks/right_base_piece.png';
@@ -19,6 +25,12 @@ class SpritePaths {
   static const all = [
     leftBasePiece,
     brick,
+    brick1,
+    brick2,
+    brick3,
+    brick4,
+    dirt1,
+    dirt2,
     middleBasePiece,
     rightBasePiece,
     subsurfBasePiece,
