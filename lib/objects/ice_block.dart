@@ -22,7 +22,6 @@ class IceBlock extends BodyComponent
   })  : sprite = StaticSprite(
           spritePath: SpritePaths.iceBlock,
           size: size,
-          // tintColour: Colors.blue.withOpacity(0.5),
         ),
         super(
           bodyDef: BodyDef(

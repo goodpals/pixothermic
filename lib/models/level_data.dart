@@ -44,9 +44,11 @@ class LevelData {
         foreground: json['foreground'].map<IntVec, String>(
                 (k, v) => MapEntry<IntVec, String>(intVecFromString(k), v))
             as Map<IntVec, String>,
-        entities: json['entities'].map<IntVec, EntityType>((k, v) =>
-            MapEntry<IntVec, EntityType>(
-                intVecFromString(k), EntityType.fromString(k)!)),
+        entities: json['entities']
+            .map<IntVec, EntityType>((k, v) => MapEntry<IntVec, EntityType>(
+                  intVecFromString(k),
+                  EntityType.fromString(v)!,
+                )),
         water: json['water'].map<IntVec, double>(
                 (k, v) => MapEntry<IntVec, double>(intVecFromString(k), v))
             as Map<IntVec, double>,

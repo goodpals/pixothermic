@@ -15,6 +15,7 @@ class SpritePaths {
   static const iceBlock = 'blocks/iceblock.png';
   static const mirror = 'blocks/mirror.png';
   static const metalCrate = 'blocks/metal_box.png';
+  static const metalFloor = 'blocks/metal_floor.png';
   static const singleTree = 'blocks/tree.png';
   static const trees = 'blocks/trees.png';
   static const stone = 'blocks/stone.png';
@@ -43,6 +44,7 @@ class SpritePaths {
     rightPlatPiece,
     stone,
     grate,
+    metalFloor,
   ];
 
   static const all = [

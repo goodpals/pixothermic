@@ -2,34 +2,24 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/sprites.dart';
-import 'package:hot_cold/utils/heatable.dart';
-import 'package:hot_cold/utils/reflective.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
+import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/long_tick.dart';
+import 'package:hot_cold/utils/reflective.dart';
 
-class MetalCrate extends BodyComponent
+class HeatableStaticBlock extends BodyComponent
     with LongTick, Heatable, Reflective
     implements HeatableBody {
-  final StaticSprite sprite;
+  final String spritePath;
   final double size;
+  final StaticSprite sprite;
 
-  factory MetalCrate.static({
+  HeatableStaticBlock({
     required Vector2 position,
-    double size = unit,
-  }) =>
-      MetalCrate(
-        position: position,
-        size: size,
-        isStatic: true,
-      );
-
-  MetalCrate({
-    required Vector2 position,
-    this.size = unit * 15 / 16,
-    bool isStatic = false,
+    this.spritePath = SpritePaths.metalFloor,
+    this.size = unit,
   })  : sprite = StaticSprite(
-          spritePath:
-              isStatic ? SpritePaths.metalFloor : SpritePaths.metalCrate,
+          spritePath: spritePath,
           size: size,
         ),
         super(
@@ -37,8 +27,6 @@ class MetalCrate extends BodyComponent
             position: position,
             type: BodyType.dynamic,
             fixedRotation: true,
-            gravityScale: Vector2(0, 2),
-            gravityOverride: isStatic ? Vector2.zero() : null,
           ),
           renderBody: false,
         );
@@ -58,18 +46,17 @@ class MetalCrate extends BodyComponent
         density: 2,
         userData: this,
       ),
-      // would be nice to have this but it fucks raytracing
-      // FixtureDef(
-      //   PolygonShape()
-      //     ..set([
-      //       Vector2(-size / 1.5, -size / 1.5),
-      //       Vector2(-size / 1.5, size / 1.5),
-      //       Vector2(size / 1.5, size / 1.5),
-      //       Vector2(size / 1.5, -size / 1.5),
-      //     ]),
-      //   userData: this,
-      //   isSensor: true,
-      // ),
+      FixtureDef(
+        PolygonShape()
+          ..set([
+            Vector2(-size / 1.9, -size / 1.9),
+            Vector2(-size / 1.9, size / 1.9),
+            Vector2(size / 1.9, size / 1.9),
+            Vector2(size / 1.9, -size / 1.9),
+          ]),
+        userData: this,
+        isSensor: true,
+      )
     ];
     add(sprite);
     return super.onLoad();
@@ -86,6 +73,7 @@ class MetalCrate extends BodyComponent
           .where((e) => e.temperature < temperature)
           .toSet()
         ..remove(this);
+      print('$temperature ${body.contacts.length}, ${heatables}');
       for (final h in heatables) {
         heatOther(h, heatTransferRate);
       }
@@ -105,14 +93,14 @@ class MetalCrate extends BodyComponent
   final double heatDissipationRate = .5;
 
   @override
-  final double heatAbsorptionRate = 4.0;
+  final double heatAbsorptionRate = 6.0;
 
   @override
-  final (double, double) tempRange = (-1, 4.5);
+  final (double, double) tempRange = (-1, 4);
 
   @override
   double get specularity => 0.1;
 
   @override
-  String toString() => 'MetalCrate';
+  String toString() => 'MetalBlock';
 }

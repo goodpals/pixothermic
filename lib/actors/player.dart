@@ -79,7 +79,7 @@ class Player extends BodyComponent with KeyboardHandler {
   void update(double dt) {
     if (hDir != 0) {
       body.applyLinearImpulse(
-        Vector2(hDir * dt * (isGrounded ? 2000 : 500), 0),
+        Vector2(hDir * dt * (isGrounded ? 2000 : 200), 0),
       );
     }
     super.update(dt);

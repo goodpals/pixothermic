@@ -9,6 +9,7 @@ import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
+import 'package:hot_cold/objects/heatable_static_block.dart';
 import 'package:hot_cold/objects/steam_particles.dart';
 import 'package:hot_cold/utils/buoyant.dart';
 import 'package:hot_cold/objects/heavy_crate.dart';
@@ -43,10 +44,15 @@ class ForegroundLayer extends PositionComponent
   FutureOr<void> onLoad() {
     for (final e in blocks.entries) {
       add(
-        StaticBlock(
-          position: Vector2(e.key.$1 * unit, e.key.$2 * unit),
-          spritePath: e.value,
-        ),
+        switch (e.value) {
+          SpritePaths.metalFloor => HeatableStaticBlock(
+              position: Vector2(e.key.$1 * unit, e.key.$2 * unit),
+            ),
+          String sprite => StaticBlock(
+              position: Vector2(e.key.$1 * unit, e.key.$2 * unit),
+              spritePath: sprite,
+            ),
+        },
       );
     }
     for (final e in level.entities.entries) {
@@ -83,8 +89,9 @@ class ForegroundLayer extends PositionComponent
   @override
   void onLongTick() {
     final crates = children.whereType<Buoyant>();
-    final hotBlocks =
-        children.whereType<HeatableBody>().where((e) => e.temperature > 0);
+    final hotBlocks = children
+        .whereType<HeatableBody>()
+        .where((e) => e.temperature > 0 && e.body.gravityOverride == null);
     _buoyCrates(crates);
     _recalculateWater(hotBlocks);
   }
@@ -114,7 +121,7 @@ class ForegroundLayer extends PositionComponent
     for (final w in water.entries) {
       final here = w.key;
       final below = w.key.down;
-      if (!hasBlock(below) || SpritePaths.isPermeable(blocks[below]!)) {
+      if ((!hasBlock(below) || SpritePaths.isPermeable(blocks[below]!))) {
         final belowAmt = newWater[below] ?? 0;
         if (belowAmt < 1) {
           newWater[below] = min(belowAmt + w.value, 1);
@@ -149,6 +156,13 @@ class ForegroundLayer extends PositionComponent
       );
       if (newWater[pos] != null) {
         newWater[pos] = (newWater[pos]! - waterSubdivision).clamp(0, 2);
+        h.cool(waterSubdivision, lock: false);
+        add(SteamParticles(position: h.body.position));
+      }
+      // heat block above
+      final up = pos.up;
+      if (newWater[up] != null) {
+        newWater[up] = (newWater[up]! - waterSubdivision).clamp(0, 2);
         h.cool(waterSubdivision, lock: false);
         add(SteamParticles(position: h.body.position));
       }

@@ -90,7 +90,7 @@ class GameClass extends Forge2DGame
 
   void _praiseTheSun() {
     final st = DateTime.now().microsecondsSinceEpoch;
-    const nRays = 2000;
+    const nRays = 5000;
     final xPoints = List.generate(nRays, (i) => (i - nRays / 2) * 0.02 * unit);
     final results = xPoints
         .map((e) => _castRay(
@@ -145,9 +145,11 @@ class NearestBoxRayCastCallback extends RayCastCallback {
     Vector2 normal,
     double fraction,
   ) {
+    // if (!fixture.isSensor) {
     nearestPoint = point.clone();
     normalAtInter = normal.clone();
     data = fixture.userData;
+    // }
 
     // Returning fraction implies that we care only about
     // fixtures that are closer to ray start point than

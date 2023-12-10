@@ -96,6 +96,7 @@ class _EditorPageState extends State<EditorPage> {
       context: context,
       builder: (context) => const LoadJsonDialog(),
     );
+    if (json == null) return;
     try {
       final level = LevelData.fromJson(jsonDecode(json));
       setState(() {
