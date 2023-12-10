@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flame_forge2d/body_component.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/game.dart';
 import 'package:hot_cold/models/constants.dart';
@@ -65,6 +64,7 @@ class ForegroundLayer extends PositionComponent
   }
 
   void meltIce(IceBlock ice) {
+    add(SteamParticles(position: ice.body.position));
     remove(ice);
     final pos = (
       (ice.body.position.x / unit).round(),
