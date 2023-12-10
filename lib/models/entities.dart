@@ -3,4 +3,5 @@ enum EntityType {
   heavyCrate,
   metalCrate,
   iceBlock,
+  mirror;
 }

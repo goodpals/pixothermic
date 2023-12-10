@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
@@ -8,6 +11,10 @@ class LevelData {
   final Map<IntVec, String> background;
   final Map<IntVec, EntityType> entities;
   final Map<IntVec, double> water;
+  final double sunHeight;
+  final double sunAngle;
+  final Color sunColour;
+  final Color waterColour;
 
   const LevelData({
     required this.spawn,
@@ -15,11 +22,16 @@ class LevelData {
     this.background = const {},
     this.entities = const {},
     this.water = const {},
+    this.sunHeight = 200,
+    this.sunAngle = -100,
+    this.sunColour = Colors.amber,
+    this.waterColour = Colors.lightBlue,
   });
 }
 
 LevelData testLevel() => LevelData(
       spawn: (0, -4),
+      sunColour: Colors.amber.shade400,
       foreground: {
         // upper platforms
         for (int i in List.generate(6, (i) => i))
@@ -54,8 +66,10 @@ LevelData testLevel() => LevelData(
       background: {},
       entities: {
         // (-5, -1): EntityType.heavyCrate,
+        // (-1, -6): EntityType.mirror,
         (-1, -3): EntityType.metalCrate,
-        (1, -3): EntityType.lightCrate,
+        (1, -3): EntityType.mirror,
+        (2, -3): EntityType.metalCrate,
         for (int i in List.generate(9, (i) => i))
           ((i % 3) - 4, 3 - (i ~/ 3)): EntityType.iceBlock,
       },
@@ -111,8 +125,6 @@ LevelData levelOne() => LevelData(
         (1, 0): EntityType.lightCrate,
         (3, 0): EntityType.iceBlock,
         (5, 0): EntityType.lightCrate,
-
-        // only shadow currently showing?
         (-6, 0): EntityType.metalCrate,
       },
       water: {

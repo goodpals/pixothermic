@@ -4,6 +4,8 @@ const longTick = 1 / 8;
 const waterSubdivision = 1 / 8;
 const temperatureSubdivision = 1 / 16;
 const heatTransferRate = 0.5;
+const lightHeatThresold = 0.4;
+const lightReflectionCutoff = 0.05;
 
 abstract class Flags {
   static const feet = 'feet';

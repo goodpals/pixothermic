@@ -4,10 +4,12 @@ import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/floatable.dart';
 import 'package:hot_cold/objects/heatable.dart';
+import 'package:hot_cold/objects/reflective.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
-class IceBlock extends BodyComponent with LongTick, Heatable, Floatable {
+class IceBlock extends BodyComponent
+    with LongTick, Heatable, Floatable, Reflective {
   final void Function(IceBlock)? onMelt;
 
   final StaticSprite sprite;
@@ -60,6 +62,9 @@ class IceBlock extends BodyComponent with LongTick, Heatable, Floatable {
       onMelt?.call(this);
     }
   }
+
+  @override
+  double get specularity => 0.5;
 
   @override
   String toString() => 'IceBlock';

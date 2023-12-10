@@ -14,6 +14,7 @@ import 'package:hot_cold/objects/heavy_crate.dart';
 import 'package:hot_cold/objects/ice_block.dart';
 import 'package:hot_cold/objects/light_crate.dart';
 import 'package:hot_cold/objects/metal_crate.dart';
+import 'package:hot_cold/objects/mirror.dart';
 import 'package:hot_cold/objects/static_block.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
@@ -53,6 +54,7 @@ class ForegroundLayer extends PositionComponent
         EntityType.heavyCrate => HeavyCrate(position: pos),
         EntityType.metalCrate => MetalCrate(position: pos),
         EntityType.iceBlock => IceBlock(position: pos, onMelt: meltIce),
+        EntityType.mirror => Mirror(position: pos),
       };
       add(entity);
     }

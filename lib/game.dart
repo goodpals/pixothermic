@@ -11,13 +11,14 @@ import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
 import 'package:hot_cold/objects/heatable.dart';
+import 'package:hot_cold/objects/reflective.dart';
 
 class GameClass extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
   late final RouterComponent router;
 
   static const double sunHeight = 200;
-  double sunAngle = -100;
+  double sunAngle = 200;
   double timeElapsed = 0;
 
   bool dragging = false;
@@ -28,7 +29,7 @@ class GameClass extends Forge2DGame
   late Player player;
   late ForegroundLayer foregroundLayer;
 
-  List<(Vector2, Vector2)> light = [];
+  List<(Vector2, Vector2, double)> light = [];
   Set<Heatable> heatables = {};
 
   @override
@@ -73,6 +74,11 @@ class GameClass extends Forge2DGame
     ..color = Colors.yellow.shade300.withOpacity(0.1)
     ..strokeWidth = 1;
 
+  final _lightPaints = List.generate(
+      10,
+      (i) => Paint()
+        ..color = Colors.amber.shade400.withOpacity((i + 1) / 20)).toList();
+
   @override
   void render(Canvas canvas) {
     super.render(canvas);
@@ -81,7 +87,7 @@ class GameClass extends Forge2DGame
       canvas.drawLine(
         worldToScreen(e.$1).toOffset(),
         worldToScreen(e.$2).toOffset(),
-        _lightPaint,
+        _lightPaints[(e.$3 * 10 - 1).floor().clamp(0, 9)],
       );
     }
     final et = DateTime.now().microsecondsSinceEpoch;
@@ -95,22 +101,39 @@ class GameClass extends Forge2DGame
     final results = xPoints
         .map((e) =>
             _castRay(Vector2(e, -sunHeight), Vector2(e + sunAngle, sunHeight)))
-        .nonNulls
+        .expand((e) => e)
         .toList();
     light = results.map((e) => e.$1).toList();
-    heatables = results.map((e) => e.$2).whereType<Heatable>().toSet();
+    heatables = results
+        .where((e) => e.$1.$3 >= lightHeatThresold)
+        .map((e) => e.$2)
+        .whereType<Heatable>()
+        .toSet();
 
     final et = DateTime.now().microsecondsSinceEpoch;
     // print('Time: ${et - st}micros');
   }
 
-  ((Vector2, Vector2), Object?)? _castRay(Vector2 start, Vector2 end) {
+  List<((Vector2, Vector2, double), Object?)> _castRay(
+    Vector2 start,
+    Vector2 end, [
+    double level = 1.0,
+  ]) {
     final output = NearestBoxRayCastCallback();
     world.raycast(output, start, end);
     if (output.nearestPoint == null) {
-      return null;
+      return [];
     }
-    return ((start, output.nearestPoint!), output.data);
+    if (output.data is Reflective && level > lightReflectionCutoff) {
+      final reflection = end - start;
+      reflection.reflect(output.normalAtInter!);
+      return [
+        ((start, output.nearestPoint!, level), output.data),
+        ..._castRay(output.nearestPoint!, output.nearestPoint! + reflection,
+            level * (output.data as Reflective).specularity),
+      ];
+    }
+    return [((start, output.nearestPoint!, level), output.data)];
   }
 }
 

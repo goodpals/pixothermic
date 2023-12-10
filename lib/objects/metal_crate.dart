@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/heatable.dart';
+import 'package:hot_cold/objects/reflective.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
-class MetalCrate extends BodyComponent with LongTick, Heatable {
+class MetalCrate extends BodyComponent with LongTick, Heatable, Reflective {
   final StaticSprite sprite;
   final double size;
 
@@ -81,6 +82,9 @@ class MetalCrate extends BodyComponent with LongTick, Heatable {
 
   @override
   final (double, double) tempRange = (-1, 4);
+
+  @override
+  double get specularity => 0.1;
 
   @override
   String toString() => 'MetalCrate';
