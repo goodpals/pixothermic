@@ -19,7 +19,7 @@ import 'package:nice_json/nice_json.dart';
 
 part 'types.dart';
 
-const levelSizeLimit = (100, 50);
+const levelSizeLimit = (30, 30);
 
 class EditorPage extends StatefulWidget {
   const EditorPage({super.key});

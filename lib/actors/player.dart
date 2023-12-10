@@ -8,7 +8,7 @@ import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/objects/steam_particles.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
-const breathMax = 8;
+const breathMax = 4;
 
 class Player extends BodyComponent
     with KeyboardHandler, ContactCallbacks, LongTick {

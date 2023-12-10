@@ -6,4 +6,5 @@ const campaignLevelPaths = [
   'mirror_intro.json',
   'acid_jump.json',
   'float_jumps.json',
+  'basin.json',
 ];
