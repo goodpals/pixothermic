@@ -19,6 +19,8 @@ import 'package:nice_json/nice_json.dart';
 
 part 'types.dart';
 
+const levelSizeLimit = (100, 50);
+
 class EditorPage extends StatefulWidget {
   const EditorPage({super.key});
 
@@ -157,7 +159,7 @@ class _EditorPageState extends State<EditorPage> {
         actions: [
           IconButton(
             onPressed: _showLoadFromJsonDialog,
-            icon: const Icon(Icons.file_download),
+            icon: const Icon(Icons.open_in_browser),
           ),
           IconButton(
             onPressed: _copyLevelData,
@@ -176,9 +178,11 @@ class _EditorPageState extends State<EditorPage> {
           },
           const SingleActivator(LogicalKeyboardKey.keyW): () {
             if (currentTile != null) _onSecondaryTapTile(currentTile!);
-          }
+          },
+          const SingleActivator(LogicalKeyboardKey.escape): () =>
+              setState(() => brush = null),
         },
-        child: Focus(
+        child: FocusScope(
           autofocus: true,
           child: Center(
             child: Row(
@@ -198,8 +202,8 @@ class _EditorPageState extends State<EditorPage> {
                     itemSize: 32,
                     diagonalDragBehavior: DiagonalDragBehavior.free,
                     delegate: TwoDimensionalChildBuilderDelegate(
-                        maxXIndex: 200,
-                        maxYIndex: 200,
+                        maxXIndex: levelSizeLimit.$1,
+                        maxYIndex: levelSizeLimit.$2,
                         builder: (context, vicinity) {
                           final pos = (vicinity.xIndex, vicinity.yIndex);
                           return _GameGridTile(
