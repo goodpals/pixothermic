@@ -34,9 +34,15 @@ class _GamePageState extends State<GamePage> {
           ],
         ),
       ),
-      body: Center(
-        child: GameWidget<GameClass>(game: game),
-      ),
+      body: Stack(children: [
+        const Image(
+          image:
+              AssetImage('assets/images/backgrounds/cave_background_one.jpg'),
+        ),
+        Center(
+          child: GameWidget<GameClass>(game: game),
+        ),
+      ]),
     );
   }
 }

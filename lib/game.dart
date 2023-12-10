@@ -9,6 +9,7 @@ import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/end_portal.dart';
+import 'package:hot_cold/objects/background.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
 import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/reflective.dart';
@@ -51,6 +52,7 @@ class GameClass extends Forge2DGame
       position: Vector2(level.goal.$1 * unit, level.goal.$2 * unit),
       onWin: _onWin,
     );
+    // world.add(Background());
     foregroundLayer = ForegroundLayer(level: level);
     world.add(foregroundLayer);
     world.add(player);
