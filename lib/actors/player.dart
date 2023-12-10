@@ -1,24 +1,38 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hot_cold/models/constants.dart';
-import 'package:hot_cold/objects/end_portal.dart';
+import 'package:hot_cold/objects/steam_particles.dart';
+import 'package:hot_cold/utils/long_tick.dart';
 
-class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
+const breathMax = 8;
+
+class Player extends BodyComponent
+    with KeyboardHandler, ContactCallbacks, LongTick {
   int hDir = 0;
+  bool submerged = false;
+  int breath = breathMax;
+  bool dead = false;
 
-  bool get isGrounded => body.contacts.any((e) =>
-      e.isTouching() &&
-      (e.fixtureA.userData == Flags.feet || e.fixtureB.userData == Flags.feet));
+  bool get isGrounded =>
+      body.contacts.any((e) =>
+          e.isTouching() &&
+          (e.fixtureA.userData == Flags.feet ||
+              e.fixtureB.userData == Flags.feet)) ||
+      body.linearVelocity.y.abs() < 0.1;
 
   final double width;
   final double height;
+  final VoidCallback onDeath;
 
   Player({
     required Vector2 position,
     this.width = unit / 2,
     this.height = unit * (7 / 8),
+    required this.onDeath,
   }) : super(
           bodyDef: BodyDef(
             position: position,
@@ -93,6 +107,20 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
       );
     }
     super.update(dt);
+  }
+
+  @override
+  void onLongTick() {
+    if (submerged && !dead) {
+      add(SteamParticles(position: body.position));
+      breath--;
+      if (breath <= 0) {
+        dead = true;
+        onDeath();
+      }
+    } else {
+      breath = min(breath + 1, breathMax);
+    }
   }
 }
 

@@ -16,8 +16,9 @@ import 'package:hot_cold/utils/reflective.dart';
 
 class GameClass extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
+  final VoidCallback? onWin;
   final LevelData level;
-  GameClass(this.level);
+  GameClass(this.level, {this.onWin});
 
   late double sunAngle = level.sunAngle;
   double timeElapsed = 0;
@@ -46,14 +47,15 @@ class GameClass extends Forge2DGame
     camera.viewfinder.zoom = 5;
     camera.viewfinder.anchor = Anchor.center;
 
-    player =
-        Player(position: Vector2(level.spawn.$1 * unit, level.spawn.$2 * unit));
+    player = Player(
+      position: Vector2(level.spawn.$1 * unit, level.spawn.$2 * unit),
+      onDeath: _onLost,
+    );
     portal = EndPortal(
       position: Vector2(level.goal.$1 * unit, level.goal.$2 * unit),
       onWin: _onWin,
     );
-    // world.add(Background());
-    foregroundLayer = ForegroundLayer(level: level);
+    foregroundLayer = ForegroundLayer(level: level, player: player);
     world.add(foregroundLayer);
     world.add(player);
     world.add(portal);
@@ -77,7 +79,14 @@ class GameClass extends Forge2DGame
     super.update(dt);
   }
 
-  void _onWin() {}
+  void _onWin() {
+    onWin?.call();
+    overlays.add('WonDialog');
+  }
+
+  void _onLost() {
+    overlays.add('LostDialog');
+  }
 
   late final List<Paint> _lightPaints = _buildLightPaints(level.sunColour);
 

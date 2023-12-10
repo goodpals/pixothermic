@@ -54,7 +54,10 @@ class _HomePageState extends State<HomePage> {
                               if (!mounted) return;
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => GamePage(level: level),
+                                  builder: (_) => GamePage(
+                                    level: level,
+                                    levelId: i,
+                                  ),
                                 ),
                               );
                             },
@@ -62,23 +65,19 @@ class _HomePageState extends State<HomePage> {
                               color: completedLevels.contains(i)
                                   ? Colors.green.withOpacity(0.1)
                                   : null,
-                              child: Stack(
-                                children: [
-                                  if (completedLevels.contains(i))
-                                    const Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Icon(Icons.check),
-                                    ),
-                                  Center(
-                                      child: Text(
-                                    partition(List.filled(i + 1, '•'),
-                                            sqrt(i + 1).floor())
-                                        .map((e) => e.join())
-                                        .join('\n'),
-                                    style: const TextStyle(
-                                        fontSize: 24, height: 0.5),
-                                  )),
-                                ],
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                    child: Text(
+                                  partition(List.filled(i + 1, '•'),
+                                          sqrt(i + 1).floor())
+                                      .map((e) => e.join())
+                                      .join('\n'),
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    height: 0.5,
+                                  ),
+                                )),
                               ),
                             ),
                           ),

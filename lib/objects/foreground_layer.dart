@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:hot_cold/actors/player.dart';
 import 'package:hot_cold/game.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/models/entities.dart';
@@ -24,6 +25,7 @@ import 'package:hot_cold/utils/long_tick.dart';
 class ForegroundLayer extends PositionComponent
     with LongTick, HasGameRef<GameClass> {
   final LevelData level;
+  final Player player;
 
   Map<IntVec, String> blocks;
   Map<IntVec, double> water;
@@ -33,6 +35,7 @@ class ForegroundLayer extends PositionComponent
   ForegroundLayer({
     Vector2? position,
     required this.level,
+    required this.player,
   })  : blocks = {...level.foreground},
         water = {...level.water},
         super(
@@ -94,6 +97,15 @@ class ForegroundLayer extends PositionComponent
         .where((e) => e.temperature > 0 && e.body.gravityOverride == null);
     _buoyCrates(crates);
     _recalculateWater(hotBlocks);
+    _checkIfPlayerInWater();
+  }
+
+  void _checkIfPlayerInWater() {
+    final pos = (
+      (player.body.position.x / unit).round(),
+      (player.body.position.y / unit).round()
+    );
+    player.submerged = water[pos] != null && water[pos]! >= 0.9;
   }
 
   void _buoyCrates(Iterable<Buoyant> crates) {
