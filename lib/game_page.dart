@@ -55,7 +55,7 @@ class _GamePageState extends State<GamePage> {
             image: DecorationImage(
               fit: BoxFit.cover,
               image: AssetImage(
-                'assets/images/backgrounds/cave_background_one.jpg',
+                'assets/images/backgrounds/cave_background_three.png',
               ),
             ),
           ),
