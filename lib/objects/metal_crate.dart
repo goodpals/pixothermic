@@ -7,7 +7,9 @@ import 'package:hot_cold/utils/reflective.dart';
 import 'package:hot_cold/objects/static_sprite.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
-class MetalCrate extends BodyComponent with LongTick, Heatable, Reflective {
+class MetalCrate extends BodyComponent
+    with LongTick, Heatable, Reflective
+    implements HeatableBody {
   final StaticSprite sprite;
   final double size;
 

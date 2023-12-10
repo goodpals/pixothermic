@@ -1,5 +1,8 @@
+import 'package:flame_forge2d/body_component.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/utils/long_tick.dart';
+
+abstract class HeatableBody implements BodyComponent, Heatable {}
 
 mixin Heatable on LongTick {
   double temperature = 0;
@@ -38,6 +41,8 @@ mixin Heatable on LongTick {
     if (lock) tempLock = tempHoldTicks;
     onTemperatureChange();
   }
+
+  void cool(double amount, {bool lock = true}) => heat(-amount, lock: lock);
 
   void heatOther(Heatable other, double amount) {
     heat(-amount, lock: false);

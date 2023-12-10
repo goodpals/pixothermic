@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame_forge2d/body_component.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/game.dart';
 import 'package:hot_cold/models/constants.dart';
@@ -9,6 +10,7 @@ import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
+import 'package:hot_cold/objects/steam_particles.dart';
 import 'package:hot_cold/utils/buoyant.dart';
 import 'package:hot_cold/objects/heavy_crate.dart';
 import 'package:hot_cold/objects/ice_block.dart';
@@ -16,6 +18,7 @@ import 'package:hot_cold/objects/light_crate.dart';
 import 'package:hot_cold/objects/metal_crate.dart';
 import 'package:hot_cold/objects/mirror.dart';
 import 'package:hot_cold/objects/static_block.dart';
+import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
 class ForegroundLayer extends PositionComponent
@@ -79,8 +82,10 @@ class ForegroundLayer extends PositionComponent
   @override
   void onLongTick() {
     final crates = children.whereType<Buoyant>();
+    final hotBlocks =
+        children.whereType<HeatableBody>().where((e) => e.temperature > 0);
     _buoyCrates(crates);
-    _recalculateWater();
+    _recalculateWater(hotBlocks);
   }
 
   void _buoyCrates(Iterable<Buoyant> crates) {
@@ -103,7 +108,7 @@ class ForegroundLayer extends PositionComponent
     }
   }
 
-  void _recalculateWater() {
+  void _recalculateWater(Iterable<HeatableBody> hotBlocks) {
     final newWater = {...water};
     for (final w in water.entries) {
       final here = w.key;
@@ -133,6 +138,18 @@ class ForegroundLayer extends PositionComponent
           newWater[here.right] = rightAmt + waterSubdivision;
           newWater[here] = newWater[here]! - waterSubdivision;
         }
+      }
+    }
+
+    for (final h in hotBlocks) {
+      final pos = (
+        (h.body.position.x / unit).round(),
+        (h.body.position.y / unit).round()
+      );
+      if (newWater[pos] != null) {
+        newWater[pos] = (newWater[pos]! - waterSubdivision).clamp(0, 2);
+        h.cool(waterSubdivision, lock: false);
+        add(SteamParticles(position: h.body.position));
       }
     }
 
