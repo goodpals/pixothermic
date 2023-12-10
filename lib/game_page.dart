@@ -1,4 +1,5 @@
 import 'package:flame/game.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/game.dart';
 import 'package:hot_cold/locator.dart';
@@ -48,12 +49,16 @@ class _GamePageState extends State<GamePage> {
           ],
         ),
       ),
-      body: Stack(children: [
-        const Image(
-          image:
-              AssetImage('assets/images/backgrounds/cave_background_one.jpg'),
-        ),
-        Center(
+      body: Center(
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(
+                'assets/images/backgrounds/cave_background_one.jpg',
+              ),
+            ),
+          ),
           child: GameWidget<GameClass>(
             game: game,
             overlayBuilderMap: {
@@ -111,7 +116,7 @@ class _GamePageState extends State<GamePage> {
             },
           ),
         ),
-      ]),
+      ),
     );
   }
 }
