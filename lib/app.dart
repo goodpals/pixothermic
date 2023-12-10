@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hot_cold/home_page.dart';
 import 'package:hot_cold/locator.dart';
+import 'package:hot_cold/splash_page.dart';
 import 'package:hot_cold/store/progress_store.dart';
 
 class App extends StatefulWidget {
@@ -15,12 +16,6 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  void initState() {
-    music().playMusicLoop();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -30,7 +25,7 @@ class _AppState extends State<App> {
       ],
       child: MaterialApp(
         title: 'Hot/Cold',
-        home: HomePage(),
+        home: const SplashPage(),
         debugShowCheckedModeBanner: false,
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           // Mouse dragging enabled for this demo

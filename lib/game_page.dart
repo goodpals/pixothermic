@@ -116,7 +116,7 @@ class _GamePageState extends State<GamePage> {
                                   MaterialPageRoute(
                                     builder: (_) => GamePage(
                                       level: level,
-                                      levelId: nextLevelId!,
+                                      levelId: nextLevelId,
                                     ),
                                   ),
                                 );

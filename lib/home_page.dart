@@ -11,7 +11,7 @@ import 'package:hot_cold/store/progress_store.dart';
 import 'package:quiver/iterables.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                     return GridView.count(
                       crossAxisCount: constraints.maxWidth ~/ 100,
                       children: [
-                        for (final (i, e) in campaignLevelPaths.indexed)
+                        for (final (i, _) in campaignLevelPaths.indexed)
                           GestureDetector(
                             onTap: () async {
                               final level = await levelStore()

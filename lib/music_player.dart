@@ -13,10 +13,10 @@ class MusicPlayer {
   }
 
   void toggleMusic() async {
-    if (player.state == PlayerState.playing) {
-      stopMusic();
-    } else {
+    if (player.state == PlayerState.stopped) {
       playMusicLoop();
+    } else {
+      stopMusic();
     }
   }
 }
