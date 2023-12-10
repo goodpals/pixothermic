@@ -69,7 +69,7 @@ LevelData testLevel() => LevelData(
         // (-1, -6): EntityType.mirror,
         (-1, -3): EntityType.metalCrate,
         (1, -3): EntityType.mirror,
-        (2, -3): EntityType.metalCrate,
+        (3, -3): EntityType.metalCrate,
         for (int i in List.generate(9, (i) => i))
           ((i % 3) - 4, 3 - (i ~/ 3)): EntityType.iceBlock,
       },

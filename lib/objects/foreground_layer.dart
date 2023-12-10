@@ -9,7 +9,7 @@ import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
-import 'package:hot_cold/objects/floatable.dart';
+import 'package:hot_cold/objects/buoyant.dart';
 import 'package:hot_cold/objects/heavy_crate.dart';
 import 'package:hot_cold/objects/ice_block.dart';
 import 'package:hot_cold/objects/light_crate.dart';
@@ -78,12 +78,12 @@ class ForegroundLayer extends PositionComponent
 
   @override
   void onLongTick() {
-    final crates = children.whereType<Floatable>();
+    final crates = children.whereType<Buoyant>();
     _buoyCrates(crates);
     _recalculateWater();
   }
 
-  void _buoyCrates(Iterable<Floatable> crates) {
+  void _buoyCrates(Iterable<Buoyant> crates) {
     for (final crate in crates) {
       final pos = (
         (crate.body.position.x / unit).round(),
