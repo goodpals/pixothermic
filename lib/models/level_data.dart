@@ -96,10 +96,13 @@ LevelData levelOne() => LevelData(
       },
       background: {},
       entities: {
-        (-2, 0): EntityType.heavyCrate,
-        (2, 0): EntityType.lightCrate,
+        (-4, 0): EntityType.heavyCrate,
+        (1, 0): EntityType.lightCrate,
+        (3, 0): EntityType.iceBlock,
         (5, 0): EntityType.lightCrate,
-        (-4, 0): EntityType.metalCrate,
+
+        // only shadow currently showing?
+        (-6, 0): EntityType.metalCrate,
       },
       water: {
         (9, -3): 6.125,
