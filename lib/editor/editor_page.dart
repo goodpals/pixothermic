@@ -39,7 +39,7 @@ class _EditorPageState extends State<EditorPage> {
   Color sunColour = Colors.amber.shade400;
   Color waterColour = Colors.indigo.shade400;
 
-  double sunAngle = 0;
+  num sunAngle = 0;
 
   IntVec? get spawn => tiles.entries
       .where(
@@ -235,7 +235,7 @@ class ObjectPalette extends StatelessWidget {
   final EditorBrush? currentAction;
   final Color waterColour;
   final Color sunColour;
-  final double sunAngle;
+  final num sunAngle;
   final void Function(Color) onSetWaterColour;
   final void Function(Color) onSetSunColour;
   final void Function(double) onSetSunAngle;
@@ -307,7 +307,7 @@ class ObjectPalette extends StatelessWidget {
             SunPanel(
               sunColour: sunColour,
               onSetSunColour: onSetSunColour,
-              sunAngle: sunAngle,
+              sunAngle: sunAngle.toDouble(),
               onSetSunAngle: onSetSunAngle,
             ),
             const Panel(

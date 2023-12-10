@@ -28,7 +28,7 @@ class ForegroundLayer extends PositionComponent
   final Player player;
 
   Map<IntVec, String> blocks;
-  Map<IntVec, double> water;
+  Map<IntVec, num> water;
 
   bool hasBlock(IntVec pos) => blocks.containsKey(pos);
 

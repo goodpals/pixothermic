@@ -9,6 +9,7 @@ import 'package:hot_cold/objects/steam_particles.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 
 const breathMax = 4;
+const jumpMax = 4;
 
 class Player extends BodyComponent
     with KeyboardHandler, ContactCallbacks, LongTick {
@@ -16,6 +17,7 @@ class Player extends BodyComponent
   bool submerged = false;
   int breath = breathMax;
   bool dead = false;
+  int jumped = 0;
 
   bool get isGrounded =>
       body.contacts.any((e) =>
@@ -78,12 +80,6 @@ class Player extends BodyComponent
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    // if (event is RawKeyDownEvent) {
-    //   if (event.data.logicalKey == LogicalKeyboardKey.space) {
-    //     if (isGrounded) body.applyForce(Vector2(0, -50000));
-    //     return false;
-    //   }
-    // }
     hDir = 0;
 
     final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
@@ -93,8 +89,11 @@ class Player extends BodyComponent
 
     hDir += isLeftKeyPressed ? -1 : 0;
     hDir += isRightKeyPressed ? 1 : 0;
-    if (keysPressed.contains(LogicalKeyboardKey.space)) {
-      if (isGrounded) body.applyForce(Vector2(0, -60000));
+    if (keysPressed.contains(LogicalKeyboardKey.space) && jumped <= 0) {
+      if (isGrounded) {
+        body.applyForce(Vector2(0, -60000));
+        jumped = jumpMax;
+      }
     }
     return false;
   }
@@ -111,6 +110,9 @@ class Player extends BodyComponent
 
   @override
   void onLongTick() {
+    if (jumped > 0) {
+      jumped--;
+    }
     if (submerged && !dead) {
       add(SteamParticles(position: body.position));
       breath--;

@@ -8,9 +8,9 @@ class LevelData {
   final IntVec goal;
   final Map<IntVec, String> foreground;
   final Map<IntVec, EntityType> entities;
-  final Map<IntVec, double> water;
-  final double sunHeight;
-  final double sunAngle;
+  final Map<IntVec, num> water;
+  final num sunHeight;
+  final num sunAngle;
   final Color sunColour;
   final Color waterColour;
 
@@ -49,9 +49,9 @@ class LevelData {
                   intVecFromString(k),
                   EntityType.fromString(v)!,
                 )),
-        water: json['water'].map<IntVec, double>(
-                (k, v) => MapEntry<IntVec, double>(intVecFromString(k), v))
-            as Map<IntVec, double>,
+        water: json['water'].map<IntVec, num>(
+                (k, v) => MapEntry<IntVec, num>(intVecFromString(k), v))
+            as Map<IntVec, num>,
         sunHeight: json['sunHeight'],
         sunAngle: json['sunAngle'],
         sunColour: Color(json['sunColour']),

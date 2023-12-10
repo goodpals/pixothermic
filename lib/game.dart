@@ -20,7 +20,8 @@ class GameClass extends Forge2DGame
   final LevelData level;
   GameClass(this.level, {this.onWin});
 
-  late double sunAngle = level.sunAngle;
+  late double sunAngle = level.sunAngle.toDouble();
+  late double sunHeight = level.sunHeight.toDouble();
   double timeElapsed = 0;
 
   bool dragging = false;
@@ -114,8 +115,8 @@ class GameClass extends Forge2DGame
     final xPoints = List.generate(nRays, (i) => (i - nRays / 2) * 0.02 * unit);
     final results = xPoints
         .map((e) => _castRay(
-              Vector2(e, -level.sunHeight),
-              Vector2(e + sunAngle, level.sunHeight),
+              Vector2(e, -sunHeight),
+              Vector2(e + sunAngle, sunHeight),
             ))
         .expand((e) => e)
         .toList();
