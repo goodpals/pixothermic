@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -18,7 +17,7 @@ class GameClass extends Forge2DGame
   late final RouterComponent router;
 
   static const double sunHeight = 200;
-  double sunAngle = 0;
+  double sunAngle = 125;
   double timeElapsed = 0;
 
   bool dragging = false;
@@ -34,11 +33,25 @@ class GameClass extends Forge2DGame
 
   @override
   FutureOr<void> onLoad() async {
-    await images
-        .loadAll([SpritePaths.brick, SpritePaths.crate, SpritePaths.iceblock]);
+    await images.loadAll([
+      SpritePaths.brick,
+      SpritePaths.leftBasePiece,
+      SpritePaths.middleBasePiece,
+      SpritePaths.rightBasePiece,
+      SpritePaths.subsurfBasePiece,
+      SpritePaths.crate,
+      SpritePaths.heavyCrate,
+      SpritePaths.metalCrate,
+      SpritePaths.iceblock,
+      SpritePaths.singleTree,
+      SpritePaths.trees,
+      SpritePaths.stone
+    ]);
     super.onLoad();
 
-    final level = testLevel();
+    // change to test each level at moment
+    // final level = testLevel();
+    final level = levelOne();
 
     // cam = CameraComponent(world: world)..viewfinder.anchor = Anchor.topLeft;
     // addAll([cam, world]);
@@ -50,8 +63,8 @@ class GameClass extends Forge2DGame
     foregroundLayer = ForegroundLayer(level: level);
     world.add(foregroundLayer);
     world.add(player);
-    world.add(
-        FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)));
+    // world.add(
+    //     FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)));
   }
 
   @override
@@ -70,7 +83,7 @@ class GameClass extends Forge2DGame
   }
 
   final _lightPaint = Paint()
-    ..color = Colors.yellow.shade100.withOpacity(0.1)
+    ..color = Colors.yellow.shade300.withOpacity(0.1)
     ..strokeWidth = 1;
 
   @override

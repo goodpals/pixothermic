@@ -21,34 +21,75 @@ class LevelData {
 LevelData testLevel() => LevelData(
       spawn: (0, -4),
       foreground: {
-        for (int i in List.generate(7, (i) => i))
+        // upper platforms
+        for (int i in List.generate(6, (i) => i))
           (i - 6, -5): SpritePaths.brick,
         for (int i in List.generate(7, (i) => i))
           (i + 2, -5): SpritePaths.brick,
-        for (int i in List.generate(11, (i) => i))
-          (i - 6, 0): SpritePaths.brick,
+
+        //main platforms
+        (-7, 0): SpritePaths.leftBasePiece,
+        for (int i in List.generate(10, (i) => i))
+          (i - 6, 0): SpritePaths.middleBasePiece,
+        (4, 0): SpritePaths.rightBasePiece,
         (7, -1): SpritePaths.brick,
         for (int i in List.generate(6, (i) => i))
           (i - -7, 0): SpritePaths.brick,
-        (4, 1): SpritePaths.brick,
-        (4, 2): SpritePaths.brick,
-        (5, 2): SpritePaths.brick,
-        (6, 2): SpritePaths.brick,
-        (7, 2): SpritePaths.brick,
-        (7, 1): SpritePaths.brick,
-        // (-8, 3): SpritePaths.brick,
-        // (-8, 2): SpritePaths.brick,
-        // for (int i in List.generate(6, (i) => i)) (i - 8, 4): SpritePaths.brick,
-        // (-7, 2): SpritePaths.brick,
-        // (-3, 3): SpritePaths.brick,
-        // (-3, 2): SpritePaths.brick,
+        (4, 1): SpritePaths.subsurfBasePiece,
+        (4, 2): SpritePaths.subsurfBasePiece,
+        (5, 2): SpritePaths.subsurfBasePiece,
+        (6, 2): SpritePaths.subsurfBasePiece,
+        (7, 2): SpritePaths.subsurfBasePiece,
+        (7, 1): SpritePaths.subsurfBasePiece,
       },
       background: {},
       entities: {
-        (-2, -4): EntityType.lightCrate,
-        (3, -3): EntityType.iceBlock,
+        (-5, -1): EntityType.heavyCrate,
+        (-3, -4): EntityType.lightCrate,
+        (-1, -3): EntityType.iceBlock,
       },
       water: {
         (6, -1): 5,
+      },
+    );
+
+LevelData levelOne() => LevelData(
+      spawn: (0, 0),
+      foreground: {
+        // left boundary
+        for (int i in List.generate(10, (i) => i))
+          (-11, i - 9): SpritePaths.brick,
+
+        // base boundary
+        (-11, 1): SpritePaths.subsurfBasePiece,
+        for (int i in List.generate(17, (i) => i))
+          (i - 10, 1): SpritePaths.middleBasePiece,
+        // (11, 1): SpritePaths.leftBasePiece,
+        for (int i in List.generate(18, (i) => i))
+          (i - -11, 1): SpritePaths.middleBasePiece,
+        for (int i in List.generate(18, (i) => i))
+          (i - 11, 2): SpritePaths.subsurfBasePiece,
+        for (int i in List.generate(8, (i) => i))
+          (i - -11, 2): SpritePaths.subsurfBasePiece,
+        for (int i in List.generate(30, (i) => i))
+          (i - 11, 3): SpritePaths.subsurfBasePiece,
+        for (int i in List.generate(30, (i) => i))
+          (i - 11, 4): SpritePaths.subsurfBasePiece,
+        for (int i in List.generate(30, (i) => i))
+          (i - 11, 5): SpritePaths.subsurfBasePiece,
+        for (int i in List.generate(30, (i) => i))
+          (i - 11, 6): SpritePaths.subsurfBasePiece,
+        for (int i in List.generate(30, (i) => i))
+          (i - 11, 7): SpritePaths.subsurfBasePiece,
+      },
+      background: {},
+      entities: {
+        (-2, 0): EntityType.heavyCrate,
+        (2, 0): EntityType.lightCrate,
+        (5, 0): EntityType.lightCrate,
+        (-4, 0): EntityType.metalCrate,
+      },
+      water: {
+        (9, -3): 6.125,
       },
     );

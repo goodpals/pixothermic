@@ -1,8 +1,4 @@
-import 'dart:async';
-
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
