@@ -11,4 +11,7 @@ class SpritePaths {
   static const singleTree = 'blocks/tree.png';
   static const trees = 'blocks/trees.png';
   static const stone = 'blocks/stone.png';
+  static const leftPlatPiece = 'blocks/left_platform_piece.png';
+  static const midPlatPiece = 'blocks/mid_platform_piece.png';
+  static const rightPlatPiece = 'blocks/right_platform_piece.png';
 }

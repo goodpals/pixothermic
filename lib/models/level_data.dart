@@ -56,6 +56,19 @@ LevelData testLevel() => LevelData(
 LevelData levelOne() => LevelData(
       spawn: (0, 0),
       foreground: {
+        // upper platforms
+        (-2, -1): SpritePaths.leftPlatPiece,
+        (-1, -1): SpritePaths.rightPlatPiece,
+
+        (1, -3): SpritePaths.leftPlatPiece,
+        (2, -3): SpritePaths.midPlatPiece,
+        (3, -3): SpritePaths.rightPlatPiece,
+
+        (6, -4): SpritePaths.leftPlatPiece,
+        for (int i in List.generate(3, (i) => i))
+          (i - -7, -4): SpritePaths.midPlatPiece,
+        (10, -4): SpritePaths.rightPlatPiece,
+
         // left boundary
         for (int i in List.generate(10, (i) => i))
           (-11, i - 9): SpritePaths.brick,
@@ -64,7 +77,6 @@ LevelData levelOne() => LevelData(
         (-11, 1): SpritePaths.subsurfBasePiece,
         for (int i in List.generate(17, (i) => i))
           (i - 10, 1): SpritePaths.middleBasePiece,
-        // (11, 1): SpritePaths.leftBasePiece,
         for (int i in List.generate(18, (i) => i))
           (i - -11, 1): SpritePaths.middleBasePiece,
         for (int i in List.generate(18, (i) => i))
