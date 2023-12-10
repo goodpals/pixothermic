@@ -7,9 +7,10 @@ import 'package:hot_cold/models/constants.dart';
 class Player extends BodyComponent with KeyboardHandler {
   int hDir = 0;
 
-  // Technically possible for this to be true at the apex of a jump, but w/e.
-  bool get isGrounded => body.linearVelocity.y.abs() < 0.1;
-  // bool get newGrounded => body.contacts.any((e) => e.isTouching() && ***SOMETHING***);
+  bool get isGrounded => body.contacts.any((e) =>
+      e.isTouching() &&
+      (e.fixtureA.userData == 'feet' || e.fixtureB.userData == 'feet'));
+
   Player({
     required Vector2 position,
     double width = unit / 2,
@@ -27,6 +28,17 @@ class Player extends BodyComponent with KeyboardHandler {
               // restitution: 0.8,
               friction: 0.2,
               density: 1,
+            ),
+            FixtureDef(
+              PolygonShape()
+                ..set([
+                  Vector2(-1, height / 2),
+                  Vector2(1, height / 2),
+                  Vector2(1, height / 2 + 0.5),
+                  Vector2(-1, height / 2 + 0.5),
+                ]),
+              isSensor: true,
+              userData: 'feet',
             ),
           ],
           bodyDef: BodyDef(
@@ -65,6 +77,9 @@ class Player extends BodyComponent with KeyboardHandler {
 
   @override
   void update(double dt) {
+    print(body.contacts
+        .map((e) => (e.fixtureA.userData, e.fixtureB.userData))
+        .toList());
     if (hDir != 0) {
       body.applyLinearImpulse(
         Vector2(hDir * dt * (isGrounded ? 2000 : 500), 0),

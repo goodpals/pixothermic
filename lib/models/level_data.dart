@@ -85,14 +85,14 @@ LevelData levelOne() => LevelData(
           (i - -11, 2): SpritePaths.subsurfBasePiece,
         for (int i in List.generate(30, (i) => i))
           (i - 11, 3): SpritePaths.subsurfBasePiece,
-        for (int i in List.generate(30, (i) => i))
-          (i - 11, 4): SpritePaths.subsurfBasePiece,
-        for (int i in List.generate(30, (i) => i))
-          (i - 11, 5): SpritePaths.subsurfBasePiece,
-        for (int i in List.generate(30, (i) => i))
-          (i - 11, 6): SpritePaths.subsurfBasePiece,
-        for (int i in List.generate(30, (i) => i))
-          (i - 11, 7): SpritePaths.subsurfBasePiece,
+        // for (int i in List.generate(30, (i) => i))
+        //   (i - 11, 4): SpritePaths.subsurfBasePiece,
+        // for (int i in List.generate(30, (i) => i))
+        //   (i - 11, 5): SpritePaths.subsurfBasePiece,
+        // for (int i in List.generate(30, (i) => i))
+        //   (i - 11, 6): SpritePaths.subsurfBasePiece,
+        // for (int i in List.generate(30, (i) => i))
+        //   (i - 11, 7): SpritePaths.subsurfBasePiece,
       },
       background: {},
       entities: {

@@ -66,8 +66,8 @@ class GameClass extends Forge2DGame
     foregroundLayer = ForegroundLayer(level: level);
     world.add(foregroundLayer);
     world.add(player);
-    // world.add(
-    //     FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)));
+    world.add(
+        FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)));
   }
 
   @override
