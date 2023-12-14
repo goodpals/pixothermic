@@ -5,6 +5,7 @@ import 'package:elegant/elegant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hot_cold/editor/load_json_dialog.dart';
+import 'package:hot_cold/editor/metadata_panel.dart';
 import 'package:hot_cold/editor/panel.dart';
 import 'package:hot_cold/editor/sun_panel.dart';
 import 'package:hot_cold/editor/water_panel.dart';
@@ -13,6 +14,7 @@ import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
+import 'package:hot_cold/utils/misc.dart';
 import 'package:hot_cold/widgets/two_dimensional_grid_view.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nice_json/nice_json.dart';
@@ -32,6 +34,10 @@ class _EditorPageState extends State<EditorPage> {
   Map<IntVec, String> foreground = {};
   Map<IntVec, EntityType> entities = {};
   Map<IntVec, EditorBrush> tiles = {};
+  String id = generateIdPhrase();
+  String? title;
+  String? author;
+  int version = 1;
 
   EditorBrush? brush;
   IntVec? currentTile;
@@ -55,7 +61,15 @@ class _EditorPageState extends State<EditorPage> {
       .firstOrNull
       ?.key;
 
-  void _setEditorAction(EditorBrush? action) => setState(() => brush = action);
+  void _onAction(EditorAction action) => switch (action) {
+        ActionSetId(id: final id) => setState(() => this.id = id),
+        ActionSetTitle(title: final title) =>
+          setState(() => this.title = title),
+        ActionSetAuthor(author: final author) =>
+          setState(() => this.author = author),
+      };
+
+  void _setEditorBrush(EditorBrush? action) => setState(() => brush = action);
 
   void _onEnterTile(IntVec tile) => setState(() => currentTile = tile);
   void _onExitTile(IntVec tile) {
@@ -100,6 +114,9 @@ class _EditorPageState extends State<EditorPage> {
     try {
       final level = LevelData.fromJson(jsonDecode(json));
       setState(() {
+        title = level.title;
+        author = level.author;
+        version = level.version;
         tiles = {
           for (final e in level.foreground.entries)
             e.key: BrushForeground(e.value),
@@ -123,6 +140,7 @@ class _EditorPageState extends State<EditorPage> {
   (LevelData?, String?) _buildLevelData() {
     if (spawn == null) return (null, 'Missing spawn');
     if (goal == null) return (null, 'Missing goal');
+    if (!isValidId(id)) return (null, 'Invalid ID');
     final fgTiles = {...tiles};
     fgTiles.removeWhere((k, v) => v is! BrushForeground);
     final entities = {...tiles};
@@ -130,6 +148,10 @@ class _EditorPageState extends State<EditorPage> {
     entities.remove(spawn);
     entities.remove(goal);
     final level = LevelData(
+      id: id,
+      title: title,
+      author: author,
+      version: version,
       spawn: spawn!,
       goal: goal!,
       foreground: {
@@ -155,7 +177,17 @@ class _EditorPageState extends State<EditorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(),
+        leading: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: const Icon(Icons.home),
+              ),
+            ],
+          ),
+        ),
         title: currentTile == null ? null : Text('$currentTile'),
         actions: [
           IconButton(
@@ -189,7 +221,11 @@ class _EditorPageState extends State<EditorPage> {
             child: Row(
               children: [
                 ObjectPalette(
-                  onChangeAction: _setEditorAction,
+                  id: id,
+                  title: title,
+                  author: author,
+                  version: version,
+                  onChangeAction: _setEditorBrush,
                   currentAction: brush,
                   waterColour: waterColour,
                   sunColour: sunColour,
@@ -197,6 +233,7 @@ class _EditorPageState extends State<EditorPage> {
                   onSetWaterColour: (c) => setState(() => waterColour = c),
                   onSetSunColour: (c) => setState(() => sunColour = c),
                   onSetSunAngle: (a) => setState(() => sunAngle = a),
+                  onAction: _onAction,
                 ),
                 Expanded(
                   child: TwoDimensionalGridView(
@@ -231,6 +268,10 @@ class _EditorPageState extends State<EditorPage> {
 }
 
 class ObjectPalette extends StatelessWidget {
+  final String id;
+  final String? title;
+  final String? author;
+  final int version;
   final void Function(EditorBrush? action) onChangeAction;
   final EditorBrush? currentAction;
   final Color waterColour;
@@ -239,9 +280,14 @@ class ObjectPalette extends StatelessWidget {
   final void Function(Color) onSetWaterColour;
   final void Function(Color) onSetSunColour;
   final void Function(double) onSetSunAngle;
+  final EditorActionCallback onAction;
 
   const ObjectPalette({
     super.key,
+    required this.id,
+    this.title,
+    this.author,
+    required this.version,
     required this.onChangeAction,
     this.currentAction,
     required this.waterColour,
@@ -250,6 +296,7 @@ class ObjectPalette extends StatelessWidget {
     required this.onSetWaterColour,
     required this.onSetSunColour,
     required this.onSetSunAngle,
+    required this.onAction,
   });
 
   @override
@@ -267,6 +314,13 @@ class ObjectPalette extends StatelessWidget {
                     currentAction != null ? () => onChangeAction(null) : null,
                 child: const Icon(Icons.clear),
               ),
+            ),
+            MetadataPanel(
+              id: id,
+              title: title,
+              author: author,
+              version: version,
+              onAction: onAction,
             ),
             Panel(
               active: currentAction is BrushForeground,

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hot_cold/game_page.dart';
 import 'package:hot_cold/locator.dart';
-import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/editor/editor_page.dart';
 import 'package:hot_cold/models/levels.dart';
 import 'package:hot_cold/store/progress_store.dart';
@@ -18,8 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final levels = [testLevel(), levelOne()];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

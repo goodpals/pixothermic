@@ -1,4 +1,8 @@
 {
+    "id": "campaign_09",
+    "title": "The Well",
+    "author": "Alex",
+    "version": 1,
     "spawn": "(3,14)",
     "goal": "(12,19)",
     "foreground": {
