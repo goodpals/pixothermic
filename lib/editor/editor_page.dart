@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:hot_cold/editor/load_json_dialog.dart';
 import 'package:hot_cold/editor/metadata_panel.dart';
 import 'package:hot_cold/editor/panel.dart';
+import 'package:hot_cold/editor/side_bar.dart';
 import 'package:hot_cold/editor/sun_panel.dart';
 import 'package:hot_cold/editor/water_panel.dart';
 import 'package:hot_cold/game_page.dart';
@@ -220,7 +221,7 @@ class _EditorPageState extends State<EditorPage> {
           child: Center(
             child: Row(
               children: [
-                ObjectPalette(
+                EditorSideBar(
                   id: id,
                   title: title,
                   author: author,
@@ -264,120 +265,6 @@ class _EditorPageState extends State<EditorPage> {
         ),
       ),
     );
-  }
-}
-
-class ObjectPalette extends StatelessWidget {
-  final String id;
-  final String? title;
-  final String? author;
-  final int version;
-  final void Function(EditorBrush? action) onChangeAction;
-  final EditorBrush? currentAction;
-  final Color waterColour;
-  final Color sunColour;
-  final num sunAngle;
-  final void Function(Color) onSetWaterColour;
-  final void Function(Color) onSetSunColour;
-  final void Function(double) onSetSunAngle;
-  final EditorActionCallback onAction;
-
-  const ObjectPalette({
-    super.key,
-    required this.id,
-    this.title,
-    this.author,
-    required this.version,
-    required this.onChangeAction,
-    this.currentAction,
-    required this.waterColour,
-    required this.sunColour,
-    required this.sunAngle,
-    required this.onSetWaterColour,
-    required this.onSetSunColour,
-    required this.onSetSunAngle,
-    required this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        color: Colors.blueGrey,
-        width: 300,
-        height: constraints.maxHeight,
-        child: ListView(
-          children: [
-            Panel(
-              child: ElevatedButton(
-                onPressed:
-                    currentAction != null ? () => onChangeAction(null) : null,
-                child: const Icon(Icons.clear),
-              ),
-            ),
-            MetadataPanel(
-              id: id,
-              title: title,
-              author: author,
-              version: version,
-              onAction: onAction,
-            ),
-            Panel(
-              active: currentAction is BrushForeground,
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 6,
-                children: SpritePaths.foregroundTiles
-                    .map((e) => SelectionTile(
-                        content: BrushForeground(e),
-                        onTap: () => onChangeAction(BrushForeground(e)),
-                        selected: currentAction == BrushForeground(e)))
-                    .toList(),
-              ),
-            ),
-            Panel(
-              active: currentAction is BrushEntity,
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 6,
-                children: EntityType.values
-                    .map(
-                      (e) => SelectionTile(
-                          content: BrushEntity(e),
-                          onTap: () => onChangeAction(BrushEntity(e)),
-                          selected: currentAction == BrushEntity(e)),
-                    )
-                    .toList(),
-              ),
-            ),
-            WaterPanel(
-              active: currentAction is BrushWater,
-              onSetActive: (v) => onChangeAction(
-                v == true ? BrushWater() : null,
-              ),
-              colour: waterColour,
-              onSetColour: onSetWaterColour,
-            ),
-            SunPanel(
-              sunColour: sunColour,
-              onSetSunColour: onSetSunColour,
-              sunAngle: sunAngle.toDouble(),
-              onSetSunAngle: onSetSunAngle,
-            ),
-            const Panel(
-              child: Text(
-                '''
-Q/Left Click: Place tile
-W/Right Click: Remove tile
-''',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
   }
 }
 

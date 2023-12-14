@@ -60,6 +60,8 @@ class _MetadataPanelState extends State<MetadataPanel> {
   @override
   Widget build(BuildContext context) {
     return Panel(
+      title: 'Metadata',
+      icon: const Icon(MdiIcons.information),
       child: Form(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
@@ -70,7 +72,10 @@ class _MetadataPanelState extends State<MetadataPanel> {
                 labelText: 'id',
                 suffixIcon: IconButton(
                   onPressed: _randomiseId,
-                  icon: const Icon(MdiIcons.dice5),
+                  icon: Icon(
+                    MdiIcons.dice5,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                 ),
               ),
               validator: (value) => switch (value) {

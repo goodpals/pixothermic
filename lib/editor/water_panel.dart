@@ -21,6 +21,8 @@ class WaterPanel extends StatelessWidget {
     return GestureDetector(
       onTap: () => onSetActive(!active),
       child: Panel(
+        title: 'Water',
+        icon: const Icon(Icons.water),
         active: active,
         child: Column(
           children: [

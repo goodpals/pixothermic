@@ -7,6 +7,7 @@ class SunPanel extends StatelessWidget {
   final void Function(Color) onSetSunColour;
   final double sunAngle;
   final void Function(double) onSetSunAngle;
+
   const SunPanel({
     super.key,
     required this.sunColour,
@@ -18,14 +19,10 @@ class SunPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Panel(
+      title: 'Sun',
+      icon: const Icon(Icons.sunny),
       child: Column(
         children: [
-          const Row(
-            children: [
-              Icon(Icons.sunny),
-              Text('Sun'),
-            ],
-          ),
           ColorPicker(
             color: sunColour,
             onChanged: onSetSunColour,
