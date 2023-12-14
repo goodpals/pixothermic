@@ -351,7 +351,12 @@ class SelectionTile extends StatelessWidget {
         margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: selected ? Border.all(color: Colors.yellow, width: 2) : null,
+          border: selected
+              ? Border.all(
+                  color: IconTheme.of(context).color ?? Colors.yellow,
+                  width: 2,
+                )
+              : null,
           image: switch (content) {
             BrushForeground(spritePath: final sprite) => DecorationImage(
                 image: AssetImage('assets/images/$sprite'),

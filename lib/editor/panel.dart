@@ -32,7 +32,7 @@ class _PanelState extends State<Panel> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: widget.active
-              ? Colors.yellow.withOpacity(0.5)
+              ? IconTheme.of(context).color ?? Colors.yellow
               : Colors.transparent,
           width: 1,
         ),
@@ -44,24 +44,24 @@ class _PanelState extends State<Panel> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (widget.title != null)
-            Row(
-              children: [
-                if (widget.icon != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: widget.icon!,
+            InkWell(
+              onTap: widget.minimisable ? _toggleMinimised : null,
+              child: Row(
+                children: [
+                  if (widget.icon != null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: widget.icon!,
+                    ),
+                  Text(
+                    widget.title!,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                Text(
-                  widget.title!,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const Spacer(),
-                if (widget.minimisable)
-                  IconButton(
-                    icon: Icon(minimised ? Icons.add : Icons.remove),
-                    onPressed: _toggleMinimised,
-                  ),
-              ],
+                  const Spacer(),
+                  if (widget.minimisable)
+                    Icon(minimised ? Icons.add : Icons.remove),
+                ],
+              ),
             ),
           if (!minimised) widget.child,
         ],

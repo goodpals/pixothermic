@@ -82,10 +82,13 @@ class EditorSideBar extends StatelessWidget {
                   shrinkWrap: true,
                   crossAxisCount: 6,
                   children: SpritePaths.foregroundTiles
-                      .map((e) => SelectionTile(
+                      .map(
+                        (e) => SelectionTile(
                           content: BrushForeground(e),
                           onTap: () => onChangeAction(BrushForeground(e)),
-                          selected: currentAction == BrushForeground(e)))
+                          selected: currentAction == BrushForeground(e),
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -99,9 +102,10 @@ class EditorSideBar extends StatelessWidget {
                   children: EntityType.values
                       .map(
                         (e) => SelectionTile(
-                            content: BrushEntity(e),
-                            onTap: () => onChangeAction(BrushEntity(e)),
-                            selected: currentAction == BrushEntity(e)),
+                          content: BrushEntity(e),
+                          onTap: () => onChangeAction(BrushEntity(e)),
+                          selected: currentAction == BrushEntity(e),
+                        ),
                       )
                       .toList(),
                 ),
