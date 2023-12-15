@@ -33,15 +33,12 @@ class ForegroundLayer extends PositionComponent
   bool hasBlock(IntVec pos) => blocks.containsKey(pos);
 
   ForegroundLayer({
-    Vector2? position,
+    super.position,
     required this.level,
     required this.player,
   })  : blocks = {...level.foreground},
         water = {...level.water},
-        super(
-          position: position,
-          anchor: Anchor.bottomLeft,
-        );
+        super(anchor: Anchor.bottomLeft);
 
   @override
   FutureOr<void> onLoad() {

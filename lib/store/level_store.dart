@@ -19,7 +19,7 @@ class LevelStore {
   Future<LevelData> loadCampaignLevel(BuildContext context, int index) async {
     if (!campaignLevels.containsKey(index)) {
       final json = await DefaultAssetBundle.of(context)
-          .loadString("assets/levels/${campaignLevelPaths[index]}");
+          .loadString('assets/levels/${campaignLevelPaths[index]}');
       campaignLevels[index] = LevelData.fromJson(
         jsonDecode(json),
         isCampaign: true,

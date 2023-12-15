@@ -24,6 +24,6 @@ class SplashPage extends StatelessWidget {
         ),
         iconSize: 64,
       ),
-    ));
+    ),);
   }
 }

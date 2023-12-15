@@ -42,6 +42,6 @@ class PortalParticles extends ParticleSystemComponent {
                   lifespan: 2,
                   to: 0,
                 );
-              }),
+              },),
         );
 }

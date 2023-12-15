@@ -72,15 +72,15 @@ class LevelData extends Equatable {
         spawn: intVecFromString(json['spawn']),
         goal: intVecFromString(json['goal']),
         foreground: json['foreground'].map<IntVec, String>(
-                (k, v) => MapEntry<IntVec, String>(intVecFromString(k), v))
+                (k, v) => MapEntry<IntVec, String>(intVecFromString(k), v),)
             as Map<IntVec, String>,
         entities: json['entities']
             .map<IntVec, EntityType>((k, v) => MapEntry<IntVec, EntityType>(
                   intVecFromString(k),
                   EntityType.fromString(v)!,
-                )),
+                ),),
         water: json['water'].map<IntVec, num>(
-                (k, v) => MapEntry<IntVec, num>(intVecFromString(k), v))
+                (k, v) => MapEntry<IntVec, num>(intVecFromString(k), v),)
             as Map<IntVec, num>,
         sunHeight: json['sunHeight'],
         sunAngle: json['sunAngle'],

@@ -1,5 +1,4 @@
 import 'package:flame/game.dart';
-import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/game.dart';
 import 'package:hot_cold/locator.dart';
@@ -112,7 +111,7 @@ class _GamePageState extends State<GamePage> {
                                 final level = await levelStore()
                                     .loadCampaignLevel(context, nextLevelId!);
                                 if (!mounted) return;
-                                Navigator.of(context).pushReplacement(
+                                await Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                     builder: (_) => GamePage(
                                       level: level,

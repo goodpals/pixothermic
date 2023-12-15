@@ -65,7 +65,7 @@ class GameClass extends Forge2DGame
     world.add(player);
     world.add(portal);
     world.add(
-        FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)));
+        FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)),);
   }
 
   @override
@@ -96,7 +96,7 @@ class GameClass extends Forge2DGame
   late final List<Paint> _lightPaints = _buildLightPaints(level.sunColour);
 
   List<Paint> _buildLightPaints(Color colour) => List.generate(
-      10, (i) => Paint()..color = colour.withOpacity((i + 1) / 20));
+      10, (i) => Paint()..color = colour.withOpacity((i + 1) / 20),);
 
   @override
   void render(Canvas canvas) {
@@ -121,12 +121,12 @@ class GameClass extends Forge2DGame
     final nRays = (width * unit * rayDensity).ceil();
     // print('nRays: $nRays, width: $width, $hConstraints');
     final xPoints = List.generate(
-        nRays, (i) => (i - nRays / 2) * raySpacing + hConstraints.$1);
+        nRays, (i) => (i - nRays / 2) * raySpacing + hConstraints.$1,);
     final results = xPoints
         .map((e) => _castRay(
               Vector2(e, -sunHeight),
               Vector2(e + sunAngle, sunHeight),
-            ))
+            ),)
         .expand((e) => e)
         .toList();
     light = results.map((e) => e.$1).toList();
@@ -156,7 +156,7 @@ class GameClass extends Forge2DGame
       return [
         ((start, output.nearestPoint!, level), output.data),
         ..._castRay(output.nearestPoint!, output.nearestPoint! + reflection,
-            level * (output.data as Reflective).specularity),
+            level * (output.data as Reflective).specularity,),
       ];
     }
     return [((start, output.nearestPoint!, level), output.data)];

@@ -5,15 +5,10 @@ import 'package:elegant/elegant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hot_cold/editor/load_json_dialog.dart';
-import 'package:hot_cold/editor/metadata_panel.dart';
-import 'package:hot_cold/editor/panel.dart';
 import 'package:hot_cold/editor/side_bar.dart';
-import 'package:hot_cold/editor/sun_panel.dart';
-import 'package:hot_cold/editor/water_panel.dart';
 import 'package:hot_cold/game_page.dart';
 import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
-import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
 import 'package:hot_cold/utils/misc.dart';
 import 'package:hot_cold/widgets/two_dimensional_grid_view.dart';
@@ -103,7 +98,7 @@ class _EditorPageState extends State<EditorPage> {
     if (level == null) return;
     Clipboard.setData(ClipboardData(text: niceJson(level.toJson())));
     ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Copied level JSON to clipboard')));
+        const SnackBar(content: Text('Copied level JSON to clipboard')),);
   }
 
   void _showLoadFromJsonDialog() async {
@@ -255,7 +250,7 @@ class _EditorPageState extends State<EditorPage> {
                             onSecondaryTap: () => _onSecondaryTapTile(pos),
                             waterColour: waterColour,
                           );
-                        }),
+                        },),
                   ),
                 ),
                 // Expanded(child: GameWidget<LevelEditor>(game: levelEditor)),

@@ -38,7 +38,7 @@ class WaterPanel extends StatelessWidget {
               initialPicker: Picker.wheel,
               pickerOrientation: PickerOrientation.portrait,
               paletteHeight: 100,
-            )
+            ),
           ],
         ),
       ),

@@ -140,6 +140,6 @@ class EditorSideBar extends StatelessWidget {
           ),
         ),
       );
-    });
+    },);
   }
 }
