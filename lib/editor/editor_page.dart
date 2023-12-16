@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:elegant/elegant.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -14,6 +15,7 @@ import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/types.dart';
 import 'package:hot_cold/utils/misc.dart';
+import 'package:hot_cold/utils/web.dart';
 import 'package:hot_cold/widgets/two_dimensional_grid_view.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nice_json/nice_json.dart';
@@ -179,14 +181,19 @@ class _EditorPageState extends State<EditorPage> {
   }
 
   void _openFilePicker() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowedExtensions: ['json']);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['json'],
+      type: FileType.custom,
+    );
 
     if (result != null) {
       try {
         PlatformFile file = result.files.first;
         // file.readStream?.transform(utf8.decoder);
-        final json = await File(file.path!).readAsString();
+        final json = switch (kIsWeb) {
+          true => utf8.decode(file.bytes!),
+          false => await File(file.path!).readAsString(),
+        };
         final map = jsonDecode(json);
         final level = LevelData.fromJson(map);
         _loadLevel(level);
@@ -206,10 +213,18 @@ class _EditorPageState extends State<EditorPage> {
           .showSnackBar(SnackBar(content: Text(error)));
       return;
     }
+    if (kIsWeb) {
+      saveTextFileWeb(
+        filename: '${level!.id}.json',
+        text: niceJson(level.toJson()),
+      );
+      return;
+    }
     final path = await FilePicker.platform.saveFile(
       dialogTitle: 'Export level as JSON',
       fileName: '${level!.id}.json',
       allowedExtensions: ['json'],
+      type: FileType.custom,
     );
     if (path == null) return;
     final file = File(path);
