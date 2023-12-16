@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:elegant/elegant.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:hot_cold/editor/load_json_dialog.dart';
 import 'package:hot_cold/editor/side_bar.dart';
 import 'package:hot_cold/game_page.dart';
@@ -98,7 +101,8 @@ class _EditorPageState extends State<EditorPage> {
     if (level == null) return;
     Clipboard.setData(ClipboardData(text: niceJson(level.toJson())));
     ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Copied level JSON to clipboard')),);
+      const SnackBar(content: Text('Copied level JSON to clipboard')),
+    );
   }
 
   void _showLoadFromJsonDialog() async {
@@ -109,28 +113,33 @@ class _EditorPageState extends State<EditorPage> {
     if (json == null) return;
     try {
       final level = LevelData.fromJson(jsonDecode(json));
-      setState(() {
-        title = level.title;
-        author = level.author;
-        version = level.version;
-        tiles = {
-          for (final e in level.foreground.entries)
-            e.key: BrushForeground(e.value),
-          for (final e in level.entities.entries) e.key: BrushEntity(e.value),
-          for (final e in level.water.entries) e.key: BrushWater(),
-          level.spawn: BrushEntity(EntityType.spawn),
-          level.goal: BrushEntity(EntityType.goal),
-        };
-        sunAngle = level.sunAngle;
-        sunColour = level.sunColour;
-        waterColour = level.waterColour;
-      });
+      _loadLevel(level);
     } catch (e, s) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Invalid level JSON: $e')));
       log('Invalid level JSON: $e\n$s');
     }
+  }
+
+  void _loadLevel(LevelData level) {
+    setState(() {
+      id = level.id;
+      title = level.title;
+      author = level.author;
+      version = level.version;
+      tiles = {
+        for (final e in level.foreground.entries)
+          e.key: BrushForeground(e.value),
+        for (final e in level.entities.entries) e.key: BrushEntity(e.value),
+        for (final e in level.water.entries) e.key: BrushWater(),
+        level.spawn: BrushEntity(EntityType.spawn),
+        level.goal: BrushEntity(EntityType.goal),
+      };
+      sunAngle = level.sunAngle;
+      sunColour = level.sunColour;
+      waterColour = level.waterColour;
+    });
   }
 
   (LevelData?, String?) _buildLevelData() {
@@ -169,22 +178,79 @@ class _EditorPageState extends State<EditorPage> {
     return (level, null);
   }
 
+  void _openFilePicker() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowedExtensions: ['json']);
+
+    if (result != null) {
+      try {
+        PlatformFile file = result.files.first;
+        // file.readStream?.transform(utf8.decoder);
+        final json = await File(file.path!).readAsString();
+        final map = jsonDecode(json);
+        final level = LevelData.fromJson(map);
+        _loadLevel(level);
+      } catch (e, s) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Loading file failed: $e')));
+        log('Loading file failed: $e\n$s');
+      }
+    }
+  }
+
+  void _saveFilePicker() async {
+    final (level, error) = _buildLevelData();
+    if (error != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
+      return;
+    }
+    final path = await FilePicker.platform.saveFile(
+      dialogTitle: 'Export level as JSON',
+      fileName: '${level!.id}.json',
+      allowedExtensions: ['json'],
+    );
+    if (path == null) return;
+    final file = File(path);
+    try {
+      await file.writeAsString(niceJson(level.toJson()));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Successfully saved to file: $path')),
+      );
+    } catch (e, s) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Saving file failed: $e')));
+      log('Saving file failed: $e\n$s');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.home),
+        ),
+        title: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
               IconButton(
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: const Icon(Icons.home),
+                onPressed: _openFilePicker,
+                icon: const Icon(Icons.folder_open),
+              ),
+              IconButton(
+                onPressed: _saveFilePicker,
+                icon: const Icon(MdiIcons.fileExportOutline),
               ),
             ],
           ),
         ),
-        title: currentTile == null ? null : Text('$currentTile'),
+        // title: currentTile == null ? null : Text('$currentTile'),
         actions: [
           IconButton(
             onPressed: _showLoadFromJsonDialog,
@@ -236,21 +302,22 @@ class _EditorPageState extends State<EditorPage> {
                     itemSize: 32,
                     diagonalDragBehavior: DiagonalDragBehavior.free,
                     delegate: TwoDimensionalChildBuilderDelegate(
-                        maxXIndex: levelSizeLimit.$1,
-                        maxYIndex: levelSizeLimit.$2,
-                        builder: (context, vicinity) {
-                          final pos = (vicinity.xIndex, vicinity.yIndex);
-                          return _GameGridTile(
-                            content: tiles[pos],
-                            position: pos,
-                            size: 32,
-                            onMouseEnter: (_) => _onEnterTile(pos),
-                            onMouseExit: (_) => _onExitTile(pos),
-                            onTap: () => _onTapTile(pos),
-                            onSecondaryTap: () => _onSecondaryTapTile(pos),
-                            waterColour: waterColour,
-                          );
-                        },),
+                      maxXIndex: levelSizeLimit.$1,
+                      maxYIndex: levelSizeLimit.$2,
+                      builder: (context, vicinity) {
+                        final pos = (vicinity.xIndex, vicinity.yIndex);
+                        return _GameGridTile(
+                          content: tiles[pos],
+                          position: pos,
+                          size: 32,
+                          onMouseEnter: (_) => _onEnterTile(pos),
+                          onMouseExit: (_) => _onExitTile(pos),
+                          onTap: () => _onTapTile(pos),
+                          onSecondaryTap: () => _onSecondaryTapTile(pos),
+                          waterColour: waterColour,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 // Expanded(child: GameWidget<LevelEditor>(game: levelEditor)),
