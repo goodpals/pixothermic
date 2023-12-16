@@ -30,7 +30,14 @@ class GameClass extends Forge2DGame
   bool lockCamera = true;
 
   late final (int, int) hConstraints = level.horizontalConstraints;
-  double rayDensity = 50;
+
+  double _rayDensity = 50;
+  double get rayDensity => _rayDensity;
+  set rayDensity(double value) {
+    _rayDensity = value;
+    _lightPaints.clear();
+    _lightPaints.addAll(_buildLightPaints(level.sunColour, value));
+  }
 
   @override
   Color backgroundColor() => Colors.transparent;
@@ -65,7 +72,8 @@ class GameClass extends Forge2DGame
     world.add(player);
     world.add(portal);
     world.add(
-        FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)),);
+      FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)),
+    );
   }
 
   @override
@@ -93,10 +101,17 @@ class GameClass extends Forge2DGame
     overlays.add('LostDialog');
   }
 
-  late final List<Paint> _lightPaints = _buildLightPaints(level.sunColour);
+  late final List<Paint> _lightPaints =
+      _buildLightPaints(level.sunColour, rayDensity);
 
-  List<Paint> _buildLightPaints(Color colour) => List.generate(
-      10, (i) => Paint()..color = colour.withOpacity((i + 1) / 20),);
+  List<Paint> _buildLightPaints(Color colour, double rayDensity) =>
+      List.generate(
+        10,
+        (i) => Paint()
+          ..color = colour.withOpacity((i + 1) / 20)
+          ..strokeWidth = unit / rayDensity * 5
+          ..blendMode = BlendMode.srcOver,
+      );
 
   @override
   void render(Canvas canvas) {
@@ -121,12 +136,16 @@ class GameClass extends Forge2DGame
     final nRays = (width * unit * rayDensity).ceil();
     // print('nRays: $nRays, width: $width, $hConstraints');
     final xPoints = List.generate(
-        nRays, (i) => (i - nRays / 2) * raySpacing + hConstraints.$1,);
+      nRays,
+      (i) => (i - nRays / 2) * raySpacing + hConstraints.$1,
+    );
     final results = xPoints
-        .map((e) => _castRay(
-              Vector2(e, -sunHeight),
-              Vector2(e + sunAngle, sunHeight),
-            ),)
+        .map(
+          (e) => _castRay(
+            Vector2(e, -sunHeight),
+            Vector2(e + sunAngle, sunHeight),
+          ),
+        )
         .expand((e) => e)
         .toList();
     light = results.map((e) => e.$1).toList();
@@ -155,8 +174,11 @@ class GameClass extends Forge2DGame
       reflection.reflect(output.normalAtInter!);
       return [
         ((start, output.nearestPoint!, level), output.data),
-        ..._castRay(output.nearestPoint!, output.nearestPoint! + reflection,
-            level * (output.data as Reflective).specularity,),
+        ..._castRay(
+          output.nearestPoint!,
+          output.nearestPoint! + reflection,
+          level * (output.data as Reflective).specularity,
+        ),
       ];
     }
     return [((start, output.nearestPoint!, level), output.data)];

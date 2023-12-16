@@ -18,12 +18,19 @@ class _SettingsDialogState extends State<SettingsDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.sunny),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(Icons.sunny),
+              Text('Ray density: ${rayDensity.round()}'),
+            ],
+          ),
           Slider(
             value: rayDensity,
             onChanged: (v) => setState(() => rayDensity = v),
             min: 4,
-            max: 64,
+            max: 32,
+            divisions: 28,
           ),
         ],
       ),
