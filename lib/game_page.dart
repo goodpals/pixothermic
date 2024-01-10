@@ -46,10 +46,10 @@ class _GamePageState extends State<GamePage> {
     settings().setRayDensity(density);
   }
 
-  int? get nextLevelId =>
-      (widget.levelId != null && campaignLevelPaths.length > widget.levelId!)
-          ? widget.levelId! + 1
-          : null;
+  int? get nextLevelId => (widget.levelId != null &&
+          campaignLevelPaths.length > widget.levelId! + 1)
+      ? widget.levelId! + 1
+      : null;
 
   final _focusScopeNode = FocusScopeNode();
   final _focusNode = FocusNode();
@@ -108,6 +108,22 @@ class _GamePageState extends State<GamePage> {
                     return Center(
                       child: AlertDialog(
                         title: const Center(child: Text('🎉🎉🎉')),
+                        content: nextLevelId != null
+                            ? const Center(
+                                heightFactor: 1,
+                                child: Text(
+                                  'Level Complete!',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : const Center(
+                                heightFactor: 1,
+                                child: Text(
+                                  'Congratulations!\nYou have completed all levels!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                         actions: [
                           IconButton(
                             onPressed: () {
