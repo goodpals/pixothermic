@@ -20,10 +20,12 @@ class Player extends BodyComponent
   int jumped = 0;
 
   bool get isGrounded =>
-      body.contacts.any((e) =>
-          e.isTouching() &&
-          (e.fixtureA.userData == Flags.feet ||
-              e.fixtureB.userData == Flags.feet),) ||
+      body.contacts.any(
+        (e) =>
+            e.isTouching() &&
+            (e.fixtureA.userData == Flags.feet ||
+                e.fixtureB.userData == Flags.feet),
+      ) ||
       body.linearVelocity.y.abs() < 0.1;
 
   final double width;
@@ -92,8 +94,9 @@ class Player extends BodyComponent
     hDir += isRightKeyPressed ? 1 : 0;
     if (keysPressed.contains(LogicalKeyboardKey.space) && jumped <= 0) {
       if (isGrounded) {
-        body.applyForce(Vector2(0, -60000));
+        body.applyForce(Vector2(0, -15000));
         jumped = jumpMax;
+        print('jumping');
       }
     }
     return false;
@@ -106,14 +109,25 @@ class Player extends BodyComponent
         Vector2(hDir * dt * (isGrounded ? 2000 : 200), 0),
       );
     }
+    if (body.linearVelocity.y < prevY) {
+      print('player velocity: ${body.linearVelocity.y.toStringAsFixed(1)}');
+      prevY = body.linearVelocity.y;
+    }
+    if (body.linearVelocity.y > 0) {
+      prevY = 0;
+    }
+
     super.update(dt);
   }
+
+  double prevY = 0;
 
   @override
   void onLongTick() {
     if (jumped > 0) {
       jumped--;
     }
+
     if (submerged && !dead) {
       add(SteamParticles(position: body.position));
       breath--;
