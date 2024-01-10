@@ -12,6 +12,7 @@ import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/end_portal.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
+import 'package:hot_cold/utils/fps_updater.dart';
 import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/reflective.dart';
 
@@ -19,7 +20,9 @@ class GameClass extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
   final VoidCallback? onWin;
   final LevelData level;
-  GameClass(this.level, {this.onWin});
+  final void Function(double fps)? onFpsUpdate;
+
+  GameClass(this.level, {this.onWin, this.onFpsUpdate});
 
   late double sunAngle = level.sunAngle.toDouble();
   late double sunHeight = level.sunHeight.toDouble();
@@ -53,9 +56,10 @@ class GameClass extends Forge2DGame
   FutureOr<void> onLoad() async {
     await images.loadAll([...SpritePaths.all]);
     super.onLoad();
+    if (onFpsUpdate != null) {
+      add(FpsUpdater(onUpdate: onFpsUpdate!));
+    }
 
-    // cam = CameraComponent(world: world)..viewfinder.anchor = Anchor.topLeft;
-    // addAll([cam, world]);
     camera.viewfinder.zoom = 5;
     camera.viewfinder.anchor = Anchor.center;
 
@@ -71,9 +75,6 @@ class GameClass extends Forge2DGame
     world.add(foregroundLayer);
     world.add(player);
     world.add(portal);
-    world.add(
-      FpsTextComponent(anchor: Anchor.topRight, scale: Vector2(0.1, 0.1)),
-    );
   }
 
   @override
