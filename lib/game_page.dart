@@ -1,9 +1,11 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hot_cold/game.dart';
 import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/levels.dart';
+import 'package:hot_cold/utils/fps_updater.dart';
 import 'package:hot_cold/widgets/settings_dialog.dart';
 
 class GamePage extends StatefulWidget {
@@ -22,6 +24,7 @@ class GamePage extends StatefulWidget {
 
 class _GamePageState extends State<GamePage> {
   late GameClass game = _makeGame();
+  final _fpsController = FpsController();
 
   void _onWin() {
     if (widget.levelId != null) {
@@ -29,10 +32,13 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
-  GameClass _makeGame() => GameClass(widget.level, onWin: _onWin)
-    ..rayDensity = settings().rayDensity;
+  GameClass _makeGame() =>
+      GameClass(widget.level, onWin: _onWin, onFpsUpdate: _onFpsUpdate)
+        ..rayDensity = settings().rayDensity;
 
   void _resetGame() => setState(() => game = _makeGame());
+
+  void _onFpsUpdate(double fps) => _fpsController.update(fps);
 
   void _adjustRayDensity(double density) {
     setState(() => game.rayDensity = density);
@@ -64,6 +70,10 @@ class _GamePageState extends State<GamePage> {
             ],
           ),
           actions: [
+            BlocBuilder<FpsController, double>(
+              bloc: _fpsController,
+              builder: (context, fps) => Text('${fps.toStringAsFixed(0)} FPS'),
+            ),
             IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () async {
