@@ -9,13 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:hot_cold/editor/load_json_dialog.dart';
+import 'package:hot_cold/editor/open_level_dialog.dart';
 import 'package:hot_cold/editor/side_bar.dart';
 import 'package:hot_cold/game_page.dart';
+import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/types.dart';
 import 'package:hot_cold/utils/misc.dart';
-import 'package:hot_cold/utils/web.dart';
+import 'package:hot_cold/utils/fake_web.dart'
+    if (dart.library.html) 'package:hot_cold/utils/web.dart' as w;
 import 'package:hot_cold/widgets/two_dimensional_grid_view.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nice_json/nice_json.dart';
@@ -105,23 +108,6 @@ class _EditorPageState extends State<EditorPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Copied level JSON to clipboard')),
     );
-  }
-
-  void _showLoadFromJsonDialog() async {
-    final json = await showDialog(
-      context: context,
-      builder: (context) => const LoadJsonDialog(),
-    );
-    if (json == null) return;
-    try {
-      final level = LevelData.fromJson(jsonDecode(json));
-      _loadLevel(level);
-    } catch (e, s) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Invalid level JSON: $e')));
-      log('Invalid level JSON: $e\n$s');
-    }
   }
 
   void _loadLevel(LevelData level) {
@@ -214,7 +200,7 @@ class _EditorPageState extends State<EditorPage> {
       return;
     }
     if (kIsWeb) {
-      saveTextFileWeb(
+      w.saveTextFileWeb(
         filename: '${level!.id}.json',
         text: niceJson(level.toJson()),
       );
@@ -242,6 +228,49 @@ class _EditorPageState extends State<EditorPage> {
     }
   }
 
+  void _showLoadFromJsonDialog() async {
+    final json = await showDialog(
+      context: context,
+      builder: (context) => const LoadJsonDialog(),
+    );
+    if (json == null) return;
+    try {
+      final level = LevelData.fromJson(jsonDecode(json));
+      _loadLevel(level);
+    } catch (e, s) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Invalid level JSON: $e')));
+      log('Invalid level JSON: $e\n$s');
+    }
+  }
+
+  void _showOpenLevelDialog() async {
+    final level = await showDialog(
+      context: context,
+      builder: (_) => const OpenLevelDialog(),
+    );
+    if (level == null) return;
+    _loadLevel(level);
+  }
+
+  void _saveLevel() async {
+    final (level, error) = _buildLevelData();
+    if (error != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
+      return;
+    }
+    final result = await levelStore().saveLevelLocal(level!);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            result == null ? Text('Saved level ${level.id}') : Text(result),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -255,12 +284,24 @@ class _EditorPageState extends State<EditorPage> {
           child: Row(
             children: [
               IconButton(
+                icon: const Icon(Icons.file_open_outlined),
+                onPressed: _showOpenLevelDialog,
+                tooltip: 'Open Level',
+              ),
+              IconButton(
+                icon: const Icon(Icons.save_outlined),
+                onPressed: _saveLevel,
+                tooltip: 'Save Level',
+              ),
+              IconButton(
                 onPressed: _openFilePicker,
-                icon: const Icon(Icons.folder_open),
+                icon: const Icon(MdiIcons.fileImportOutline),
+                tooltip: 'Import JSON File',
               ),
               IconButton(
                 onPressed: _saveFilePicker,
                 icon: const Icon(MdiIcons.fileExportOutline),
+                tooltip: 'Export as JSON',
               ),
             ],
           ),
@@ -324,6 +365,7 @@ class _EditorPageState extends State<EditorPage> {
                         return _GameGridTile(
                           content: tiles[pos],
                           position: pos,
+                          active: pos == currentTile,
                           size: 32,
                           onMouseEnter: (_) => _onEnterTile(pos),
                           onMouseExit: (_) => _onExitTile(pos),

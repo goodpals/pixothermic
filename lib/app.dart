@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/splash_page.dart';
+import 'package:hot_cold/store/level_store.dart';
 import 'package:hot_cold/store/progress_store.dart';
 
 class App extends StatefulWidget {
@@ -19,6 +20,9 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<LevelStore>(
+          create: (_) => levelStore(),
+        ),
         BlocProvider<ProgressStore>(
           create: (_) => progress(),
         ),
