@@ -1,4 +1,6 @@
 {
+    "id": "campaign_05",
+    "version": 1,
     "spawn": "(8,8)",
     "goal": "(8,13)",
     "foreground": {

@@ -23,7 +23,7 @@ class Player extends BodyComponent
       body.contacts.any((e) =>
           e.isTouching() &&
           (e.fixtureA.userData == Flags.feet ||
-              e.fixtureB.userData == Flags.feet)) ||
+              e.fixtureB.userData == Flags.feet),) ||
       body.linearVelocity.y.abs() < 0.1;
 
   final double width;

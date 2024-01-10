@@ -1,18 +1,24 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:elegant/elegant.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:hot_cold/editor/load_json_dialog.dart';
-import 'package:hot_cold/editor/panel.dart';
-import 'package:hot_cold/editor/sun_panel.dart';
-import 'package:hot_cold/editor/water_panel.dart';
+import 'package:hot_cold/editor/open_level_dialog.dart';
+import 'package:hot_cold/editor/side_bar.dart';
 import 'package:hot_cold/game_page.dart';
+import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/level_data.dart';
-import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
+import 'package:hot_cold/utils/misc.dart';
+import 'package:hot_cold/utils/fake_web.dart'
+    if (dart.library.html) 'package:hot_cold/utils/web.dart' as w;
 import 'package:hot_cold/widgets/two_dimensional_grid_view.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nice_json/nice_json.dart';
@@ -32,6 +38,10 @@ class _EditorPageState extends State<EditorPage> {
   Map<IntVec, String> foreground = {};
   Map<IntVec, EntityType> entities = {};
   Map<IntVec, EditorBrush> tiles = {};
+  String id = generateIdPhrase();
+  String? title;
+  String? author;
+  int version = 1;
 
   EditorBrush? brush;
   IntVec? currentTile;
@@ -55,7 +65,15 @@ class _EditorPageState extends State<EditorPage> {
       .firstOrNull
       ?.key;
 
-  void _setEditorAction(EditorBrush? action) => setState(() => brush = action);
+  void _onAction(EditorAction action) => switch (action) {
+        ActionSetId(id: final id) => setState(() => this.id = id),
+        ActionSetTitle(title: final title) =>
+          setState(() => this.title = title),
+        ActionSetAuthor(author: final author) =>
+          setState(() => this.author = author),
+      };
+
+  void _setEditorBrush(EditorBrush? action) => setState(() => brush = action);
 
   void _onEnterTile(IntVec tile) => setState(() => currentTile = tile);
   void _onExitTile(IntVec tile) {
@@ -88,41 +106,34 @@ class _EditorPageState extends State<EditorPage> {
     if (level == null) return;
     Clipboard.setData(ClipboardData(text: niceJson(level.toJson())));
     ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Copied level JSON to clipboard')));
+      const SnackBar(content: Text('Copied level JSON to clipboard')),
+    );
   }
 
-  void _showLoadFromJsonDialog() async {
-    final json = await showDialog(
-      context: context,
-      builder: (context) => const LoadJsonDialog(),
-    );
-    if (json == null) return;
-    try {
-      final level = LevelData.fromJson(jsonDecode(json));
-      setState(() {
-        tiles = {
-          for (final e in level.foreground.entries)
-            e.key: BrushForeground(e.value),
-          for (final e in level.entities.entries) e.key: BrushEntity(e.value),
-          for (final e in level.water.entries) e.key: BrushWater(),
-          level.spawn: BrushEntity(EntityType.spawn),
-          level.goal: BrushEntity(EntityType.goal),
-        };
-        sunAngle = level.sunAngle;
-        sunColour = level.sunColour;
-        waterColour = level.waterColour;
-      });
-    } catch (e, s) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Invalid level JSON: $e')));
-      log('Invalid level JSON: $e\n$s');
-    }
+  void _loadLevel(LevelData level) {
+    setState(() {
+      id = level.id;
+      title = level.title;
+      author = level.author;
+      version = level.version;
+      tiles = {
+        for (final e in level.foreground.entries)
+          e.key: BrushForeground(e.value),
+        for (final e in level.entities.entries) e.key: BrushEntity(e.value),
+        for (final e in level.water.entries) e.key: BrushWater(),
+        level.spawn: BrushEntity(EntityType.spawn),
+        level.goal: BrushEntity(EntityType.goal),
+      };
+      sunAngle = level.sunAngle;
+      sunColour = level.sunColour;
+      waterColour = level.waterColour;
+    });
   }
 
   (LevelData?, String?) _buildLevelData() {
     if (spawn == null) return (null, 'Missing spawn');
     if (goal == null) return (null, 'Missing goal');
+    if (!isValidId(id)) return (null, 'Invalid ID');
     final fgTiles = {...tiles};
     fgTiles.removeWhere((k, v) => v is! BrushForeground);
     final entities = {...tiles};
@@ -130,6 +141,10 @@ class _EditorPageState extends State<EditorPage> {
     entities.remove(spawn);
     entities.remove(goal);
     final level = LevelData(
+      id: id,
+      title: title,
+      author: author,
+      version: version,
       spawn: spawn!,
       goal: goal!,
       foreground: {
@@ -151,12 +166,147 @@ class _EditorPageState extends State<EditorPage> {
     return (level, null);
   }
 
+  void _openFilePicker() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['json'],
+      type: FileType.custom,
+    );
+
+    if (result != null) {
+      try {
+        PlatformFile file = result.files.first;
+        // file.readStream?.transform(utf8.decoder);
+        final json = switch (kIsWeb) {
+          true => utf8.decode(file.bytes!),
+          false => await File(file.path!).readAsString(),
+        };
+        final map = jsonDecode(json);
+        final level = LevelData.fromJson(map);
+        _loadLevel(level);
+      } catch (e, s) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Loading file failed: $e')));
+        log('Loading file failed: $e\n$s');
+      }
+    }
+  }
+
+  void _saveFilePicker() async {
+    final (level, error) = _buildLevelData();
+    if (error != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
+      return;
+    }
+    if (kIsWeb) {
+      w.saveTextFileWeb(
+        filename: '${level!.id}.json',
+        text: niceJson(level.toJson()),
+      );
+      return;
+    }
+    final path = await FilePicker.platform.saveFile(
+      dialogTitle: 'Export level as JSON',
+      fileName: '${level!.id}.json',
+      allowedExtensions: ['json'],
+      type: FileType.custom,
+    );
+    if (path == null) return;
+    final file = File(path);
+    try {
+      await file.writeAsString(niceJson(level.toJson()));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Successfully saved to file: $path')),
+      );
+    } catch (e, s) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Saving file failed: $e')));
+      log('Saving file failed: $e\n$s');
+    }
+  }
+
+  void _showLoadFromJsonDialog() async {
+    final json = await showDialog(
+      context: context,
+      builder: (context) => const LoadJsonDialog(),
+    );
+    if (json == null) return;
+    try {
+      final level = LevelData.fromJson(jsonDecode(json));
+      _loadLevel(level);
+    } catch (e, s) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Invalid level JSON: $e')));
+      log('Invalid level JSON: $e\n$s');
+    }
+  }
+
+  void _showOpenLevelDialog() async {
+    final level = await showDialog(
+      context: context,
+      builder: (_) => const OpenLevelDialog(),
+    );
+    if (level == null) return;
+    _loadLevel(level);
+  }
+
+  void _saveLevel() async {
+    final (level, error) = _buildLevelData();
+    if (error != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
+      return;
+    }
+    final result = await levelStore().saveLevelLocal(level!);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            result == null ? Text('Saved level ${level.id}') : Text(result),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(),
-        title: currentTile == null ? null : Text('$currentTile'),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.home),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.file_open_outlined),
+                onPressed: _showOpenLevelDialog,
+                tooltip: 'Open Level',
+              ),
+              IconButton(
+                icon: const Icon(Icons.save_outlined),
+                onPressed: _saveLevel,
+                tooltip: 'Save Level',
+              ),
+              IconButton(
+                onPressed: _openFilePicker,
+                icon: const Icon(MdiIcons.fileImportOutline),
+                tooltip: 'Import JSON File',
+              ),
+              IconButton(
+                onPressed: _saveFilePicker,
+                icon: const Icon(MdiIcons.fileExportOutline),
+                tooltip: 'Export as JSON',
+              ),
+            ],
+          ),
+        ),
+        // title: currentTile == null ? null : Text('$currentTile'),
         actions: [
           IconButton(
             onPressed: _showLoadFromJsonDialog,
@@ -188,8 +338,12 @@ class _EditorPageState extends State<EditorPage> {
           child: Center(
             child: Row(
               children: [
-                ObjectPalette(
-                  onChangeAction: _setEditorAction,
+                EditorSideBar(
+                  id: id,
+                  title: title,
+                  author: author,
+                  version: version,
+                  onChangeAction: _setEditorBrush,
                   currentAction: brush,
                   waterColour: waterColour,
                   sunColour: sunColour,
@@ -197,27 +351,30 @@ class _EditorPageState extends State<EditorPage> {
                   onSetWaterColour: (c) => setState(() => waterColour = c),
                   onSetSunColour: (c) => setState(() => sunColour = c),
                   onSetSunAngle: (a) => setState(() => sunAngle = a),
+                  onAction: _onAction,
                 ),
                 Expanded(
                   child: TwoDimensionalGridView(
                     itemSize: 32,
                     diagonalDragBehavior: DiagonalDragBehavior.free,
                     delegate: TwoDimensionalChildBuilderDelegate(
-                        maxXIndex: levelSizeLimit.$1,
-                        maxYIndex: levelSizeLimit.$2,
-                        builder: (context, vicinity) {
-                          final pos = (vicinity.xIndex, vicinity.yIndex);
-                          return _GameGridTile(
-                            content: tiles[pos],
-                            position: pos,
-                            size: 32,
-                            onMouseEnter: (_) => _onEnterTile(pos),
-                            onMouseExit: (_) => _onExitTile(pos),
-                            onTap: () => _onTapTile(pos),
-                            onSecondaryTap: () => _onSecondaryTapTile(pos),
-                            waterColour: waterColour,
-                          );
-                        }),
+                      maxXIndex: levelSizeLimit.$1,
+                      maxYIndex: levelSizeLimit.$2,
+                      builder: (context, vicinity) {
+                        final pos = (vicinity.xIndex, vicinity.yIndex);
+                        return _GameGridTile(
+                          content: tiles[pos],
+                          position: pos,
+                          active: pos == currentTile,
+                          size: 32,
+                          onMouseEnter: (_) => _onEnterTile(pos),
+                          onMouseExit: (_) => _onExitTile(pos),
+                          onTap: () => _onTapTile(pos),
+                          onSecondaryTap: () => _onSecondaryTapTile(pos),
+                          waterColour: waterColour,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 // Expanded(child: GameWidget<LevelEditor>(game: levelEditor)),
@@ -227,103 +384,6 @@ class _EditorPageState extends State<EditorPage> {
         ),
       ),
     );
-  }
-}
-
-class ObjectPalette extends StatelessWidget {
-  final void Function(EditorBrush? action) onChangeAction;
-  final EditorBrush? currentAction;
-  final Color waterColour;
-  final Color sunColour;
-  final num sunAngle;
-  final void Function(Color) onSetWaterColour;
-  final void Function(Color) onSetSunColour;
-  final void Function(double) onSetSunAngle;
-
-  const ObjectPalette({
-    super.key,
-    required this.onChangeAction,
-    this.currentAction,
-    required this.waterColour,
-    required this.sunColour,
-    required this.sunAngle,
-    required this.onSetWaterColour,
-    required this.onSetSunColour,
-    required this.onSetSunAngle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        color: Colors.blueGrey,
-        width: 300,
-        height: constraints.maxHeight,
-        child: ListView(
-          children: [
-            Panel(
-              child: ElevatedButton(
-                onPressed:
-                    currentAction != null ? () => onChangeAction(null) : null,
-                child: const Icon(Icons.clear),
-              ),
-            ),
-            Panel(
-              active: currentAction is BrushForeground,
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 6,
-                children: SpritePaths.foregroundTiles
-                    .map((e) => SelectionTile(
-                        content: BrushForeground(e),
-                        onTap: () => onChangeAction(BrushForeground(e)),
-                        selected: currentAction == BrushForeground(e)))
-                    .toList(),
-              ),
-            ),
-            Panel(
-              active: currentAction is BrushEntity,
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 6,
-                children: EntityType.values
-                    .map(
-                      (e) => SelectionTile(
-                          content: BrushEntity(e),
-                          onTap: () => onChangeAction(BrushEntity(e)),
-                          selected: currentAction == BrushEntity(e)),
-                    )
-                    .toList(),
-              ),
-            ),
-            WaterPanel(
-              active: currentAction is BrushWater,
-              onSetActive: (v) => onChangeAction(
-                v == true ? BrushWater() : null,
-              ),
-              colour: waterColour,
-              onSetColour: onSetWaterColour,
-            ),
-            SunPanel(
-              sunColour: sunColour,
-              onSetSunColour: onSetSunColour,
-              sunAngle: sunAngle.toDouble(),
-              onSetSunAngle: onSetSunAngle,
-            ),
-            const Panel(
-              child: Text(
-                '''
-Q/Left Click: Place tile
-W/Right Click: Remove tile
-''',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
   }
 }
 
@@ -410,7 +470,12 @@ class SelectionTile extends StatelessWidget {
         margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: selected ? Border.all(color: Colors.yellow, width: 2) : null,
+          border: selected
+              ? Border.all(
+                  color: IconTheme.of(context).color ?? Colors.yellow,
+                  width: 2,
+                )
+              : null,
           image: switch (content) {
             BrushForeground(spritePath: final sprite) => DecorationImage(
                 image: AssetImage('assets/images/$sprite'),

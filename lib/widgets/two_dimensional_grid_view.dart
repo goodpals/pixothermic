@@ -154,13 +154,13 @@ class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
     verticalOffset.applyContentDimensions(
       0.0,
       clampDouble(
-          verticalExtent - viewportDimension.height, 0.0, double.infinity),
+          verticalExtent - viewportDimension.height, 0.0, double.infinity,),
     );
     final double horizontalExtent = itemSize * (maxColumnIndex + 1);
     horizontalOffset.applyContentDimensions(
       0.0,
       clampDouble(
-          horizontalExtent - viewportDimension.width, 0.0, double.infinity),
+          horizontalExtent - viewportDimension.width, 0.0, double.infinity,),
     );
     // Super class handles garbage collection too!
   }

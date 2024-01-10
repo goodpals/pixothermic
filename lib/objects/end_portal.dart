@@ -14,7 +14,7 @@ class EndPortal extends BodyComponent with LongTick, ContactCallbacks {
 
   EndPortal({
     required Vector2 position,
-    this.size = unit * 1.5,
+    this.size = unit * 0.8,
     required this.onWin,
   }) : super(
           bodyDef: BodyDef(

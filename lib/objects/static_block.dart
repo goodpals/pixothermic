@@ -5,7 +5,7 @@ import 'package:hot_cold/objects/static_sprite.dart';
 class StaticBlock extends BodyComponent {
   final String spritePath;
   StaticBlock(
-      {required Vector2 position, required this.spritePath, double size = unit})
+      {required Vector2 position, required this.spritePath, double size = unit,})
       : super(
           fixtureDefs: [
             FixtureDef(

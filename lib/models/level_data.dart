@@ -1,11 +1,21 @@
 import 'dart:math';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_cold/models/entities.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/models/types.dart';
+import 'package:hot_cold/utils/misc.dart';
 
-class LevelData {
+class LevelData extends Equatable {
+  final String id;
+  final String? title;
+  final String? author;
+  final int version;
+
+  /// Whether this is part of the campaign.
+  /// This is filled in automatically, not from the JSON.
+  final bool isCampaign;
   final IntVec spawn;
   final IntVec goal;
   final Map<IntVec, String> foreground;
@@ -17,11 +27,15 @@ class LevelData {
   final Color waterColour;
 
   (int, int) get horizontalConstraints => (leftMostBlock, rightMostBlock);
-
   int get leftMostBlock => foreground.keys.map((e) => e.$1).reduce(min);
   int get rightMostBlock => foreground.keys.map((e) => e.$1).reduce(max);
 
   const LevelData({
+    required this.id,
+    this.title,
+    this.author,
+    this.version = 1,
+    this.isCampaign = false,
     required this.spawn,
     required this.goal,
     this.foreground = const {},
@@ -34,6 +48,10 @@ class LevelData {
   });
 
   Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'author': author,
+        'version': version,
         'spawn': spawn.export(),
         'goal': goal.export(),
         'foreground': foreground.map((k, v) => MapEntry(k.export(), v)),
@@ -45,28 +63,38 @@ class LevelData {
         'waterColour': waterColour.value,
       };
 
-  factory LevelData.fromJson(Map json) => LevelData(
+  factory LevelData.fromJson(Map json, {bool isCampaign = false}) => LevelData(
+        id: json['id'] ?? generateIdPhrase(),
+        title: json['title'],
+        author: json['author'],
+        version: json['version'] ?? 1,
+        isCampaign: isCampaign,
         spawn: intVecFromString(json['spawn']),
         goal: intVecFromString(json['goal']),
         foreground: json['foreground'].map<IntVec, String>(
-                (k, v) => MapEntry<IntVec, String>(intVecFromString(k), v))
-            as Map<IntVec, String>,
-        entities: json['entities']
-            .map<IntVec, EntityType>((k, v) => MapEntry<IntVec, EntityType>(
-                  intVecFromString(k),
-                  EntityType.fromString(v)!,
-                )),
+          (k, v) => MapEntry<IntVec, String>(intVecFromString(k), v),
+        ) as Map<IntVec, String>,
+        entities: json['entities'].map<IntVec, EntityType>(
+          (k, v) => MapEntry<IntVec, EntityType>(
+            intVecFromString(k),
+            EntityType.fromString(v)!,
+          ),
+        ),
         water: json['water'].map<IntVec, num>(
-                (k, v) => MapEntry<IntVec, num>(intVecFromString(k), v))
-            as Map<IntVec, num>,
+          (k, v) => MapEntry<IntVec, num>(intVecFromString(k), v),
+        ) as Map<IntVec, num>,
         sunHeight: json['sunHeight'],
         sunAngle: json['sunAngle'],
         sunColour: Color(json['sunColour']),
         waterColour: Color(json['waterColour']),
       );
+
+  @override
+  List<Object?> get props => [title, author, version];
 }
 
 LevelData testLevel() => LevelData(
+      id: 'test',
       spawn: (0, -4),
       goal: (0, 20),
       sunColour: Colors.amber.shade400,
@@ -114,61 +142,7 @@ LevelData testLevel() => LevelData(
         for (int i in List.generate(9, (i) => i))
           ((i % 3) - 4, 3 - (i ~/ 3)): EntityType.iceBlock,
       },
-      water: {
+      water: const {
         (6, -1): 5,
-      },
-    );
-
-LevelData levelOne() => LevelData(
-      spawn: (0, 0),
-      goal: (0, 20),
-      foreground: {
-        // upper platforms
-        (-2, -1): SpritePaths.leftPlatPiece,
-        (-1, -1): SpritePaths.rightPlatPiece,
-
-        (1, -3): SpritePaths.leftPlatPiece,
-        (2, -3): SpritePaths.midPlatPiece,
-        (3, -3): SpritePaths.rightPlatPiece,
-
-        (6, -4): SpritePaths.leftPlatPiece,
-        for (int i in List.generate(3, (i) => i))
-          (i - -7, -4): SpritePaths.midPlatPiece,
-        (10, -4): SpritePaths.rightPlatPiece,
-
-        // left boundary
-        for (int i in List.generate(10, (i) => i))
-          (-11, i - 9): SpritePaths.brick,
-
-        // base boundary
-        (-11, 1): SpritePaths.subsurfBasePiece,
-        for (int i in List.generate(17, (i) => i))
-          (i - 10, 1): SpritePaths.middleBasePiece,
-        for (int i in List.generate(18, (i) => i))
-          (i - -11, 1): SpritePaths.middleBasePiece,
-        for (int i in List.generate(18, (i) => i))
-          (i - 11, 2): SpritePaths.subsurfBasePiece,
-        for (int i in List.generate(8, (i) => i))
-          (i - -11, 2): SpritePaths.subsurfBasePiece,
-        for (int i in List.generate(30, (i) => i))
-          (i - 11, 3): SpritePaths.subsurfBasePiece,
-        // for (int i in List.generate(30, (i) => i))
-        //   (i - 11, 4): SpritePaths.subsurfBasePiece,
-        // for (int i in List.generate(30, (i) => i))
-        //   (i - 11, 5): SpritePaths.subsurfBasePiece,
-        // for (int i in List.generate(30, (i) => i))
-        //   (i - 11, 6): SpritePaths.subsurfBasePiece,
-        // for (int i in List.generate(30, (i) => i))
-        //   (i - 11, 7): SpritePaths.subsurfBasePiece,
-      },
-      entities: {
-        (-4, 0): EntityType.heavyCrate,
-        (1, 0): EntityType.lightCrate,
-        (3, 0): EntityType.iceBlock,
-        (5, 0): EntityType.lightCrate,
-        (-6, 0): EntityType.metalCrate,
-      },
-      water: {
-        (9, -3): 6.125,
       },
     );

@@ -29,7 +29,7 @@ class HeavyCrate extends BodyComponent {
             StaticSprite(
               spritePath: SpritePaths.heavyCrate,
               size: size,
-            )
+            ),
           ],
           renderBody: false,
         );

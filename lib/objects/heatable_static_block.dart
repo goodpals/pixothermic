@@ -57,7 +57,7 @@ class HeatableStaticBlock extends BodyComponent
           ]),
         userData: this,
         isSensor: true,
-      )
+      ),
     ];
     add(sprite);
     return super.onLoad();
@@ -74,7 +74,6 @@ class HeatableStaticBlock extends BodyComponent
           .where((e) => e.temperature < temperature)
           .toSet()
         ..remove(this);
-      print('$temperature ${body.contacts.length}, ${heatables}');
       for (final h in heatables) {
         heatOther(h, heatTransferRate);
       }
