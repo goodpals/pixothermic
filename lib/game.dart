@@ -98,7 +98,9 @@ class GameClass extends Forge2DGame
   }
 
   void _onLost() {
-    overlays.isActive('WonDialog') ? null : overlays.add('LostDialog');
+    if (!overlays.isActive('WonDialog')) {
+      overlays.add('LostDialog');
+    }
   }
 
   late final List<Paint> _lightPaints =
