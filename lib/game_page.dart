@@ -48,18 +48,33 @@ class _GamePageState extends State<GamePage> {
     settings().setRayDensity(density);
   }
 
-  final List<String> deathMessages = [
-    'YOU DIED',
+  static const List<String> deathMessages = [
+    'YOU\nDIED',
+    'You are dead',
     'wasted',
     'We\'ll get \'em next time!',
-    'Ope, you lose',
-    'We regret to inform you that you have been unalived',
+    '\'F\' to pay respect',
+    'We regret to inform you that you are no longer alive',
     'Character status: deceased',
+    'Tip: staying underwater may prevent being alive',
+    'GAME OVER',
+    'Try again?',
+    'git gud, scrub',
+    'lol fail',
   ];
 
-  int pickDeathMessage() {
-    return Random().nextInt(deathMessages.length);
-  }
+  static const List<String> winMessages = [
+    'Level Complete!',
+    'Well done!',
+    'Passed',
+    'Not bad',
+    'Ok, nobody likes a show-off',
+  ];
+
+  String pickDeathMessage() =>
+      deathMessages[Random().nextInt(deathMessages.length)];
+
+  String pickWinMessage() => winMessages[Random().nextInt(winMessages.length)];
 
   int? get nextLevelId => (widget.levelId != null &&
           campaignLevelPaths.length > widget.levelId! + 1)
@@ -124,11 +139,12 @@ class _GamePageState extends State<GamePage> {
                       child: AlertDialog(
                         title: const Center(child: Text('🎉🎉🎉')),
                         content: nextLevelId != null
-                            ? const Center(
+                            ? Center(
                                 heightFactor: 1,
                                 child: Text(
-                                  'Level Complete!',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  pickWinMessage(),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                               )
                             : const Center(
@@ -174,7 +190,7 @@ class _GamePageState extends State<GamePage> {
                         content: Center(
                           heightFactor: 1,
                           child: Text(
-                            deathMessages[pickDeathMessage()],
+                            pickDeathMessage(),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
