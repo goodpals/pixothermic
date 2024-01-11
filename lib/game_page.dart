@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +46,19 @@ class _GamePageState extends State<GamePage> {
     setState(() => game.rayDensity = density);
     _focusNode.requestFocus();
     settings().setRayDensity(density);
+  }
+
+  final List<String> deathMessages = [
+    'YOU DIED',
+    'wasted',
+    'We\'ll get \'em next time!',
+    'Ope, you lose',
+    'We regret to inform you that you have been unalived',
+    'Character status: deceased',
+  ];
+
+  int pickDeathMessage() {
+    return Random().nextInt(deathMessages.length);
   }
 
   int? get nextLevelId => (widget.levelId != null &&
@@ -156,6 +171,13 @@ class _GamePageState extends State<GamePage> {
                     return Center(
                       child: AlertDialog(
                         title: const Center(child: Text('😢😢😢')),
+                        content: Center(
+                          heightFactor: 1,
+                          child: Text(
+                            deathMessages[pickDeathMessage()],
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         actions: [
                           IconButton(
                             onPressed: () {
