@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +47,34 @@ class _GamePageState extends State<GamePage> {
     _focusNode.requestFocus();
     settings().setRayDensity(density);
   }
+
+  static const List<String> deathMessages = [
+    'YOU\nDIED',
+    'You are dead',
+    'wasted',
+    'We\'ll get \'em next time!',
+    '\'F\' to pay respect',
+    'We regret to inform you that you are no longer alive',
+    'Character status: deceased',
+    'Tip: staying underwater may prevent being alive',
+    'GAME OVER',
+    'Try again?',
+    'git gud, scrub',
+    'lol fail',
+  ];
+
+  static const List<String> winMessages = [
+    'Level Complete!',
+    'Well done!',
+    'Passed',
+    'Not bad',
+    'Ok, nobody likes a show-off',
+  ];
+
+  String pickDeathMessage() =>
+      deathMessages[Random().nextInt(deathMessages.length)];
+
+  String pickWinMessage() => winMessages[Random().nextInt(winMessages.length)];
 
   int? get nextLevelId => (widget.levelId != null &&
           campaignLevelPaths.length > widget.levelId! + 1)
@@ -109,11 +139,12 @@ class _GamePageState extends State<GamePage> {
                       child: AlertDialog(
                         title: const Center(child: Text('🎉🎉🎉')),
                         content: nextLevelId != null
-                            ? const Center(
+                            ? Center(
                                 heightFactor: 1,
                                 child: Text(
-                                  'Level Complete!',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  pickWinMessage(),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                               )
                             : const Center(
@@ -156,6 +187,13 @@ class _GamePageState extends State<GamePage> {
                     return Center(
                       child: AlertDialog(
                         title: const Center(child: Text('😢😢😢')),
+                        content: Center(
+                          heightFactor: 1,
+                          child: Text(
+                            pickDeathMessage(),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         actions: [
                           IconButton(
                             onPressed: () {
