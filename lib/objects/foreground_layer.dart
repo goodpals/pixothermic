@@ -133,7 +133,6 @@ class ForegroundLayer extends PositionComponent
       final below = w.key.down;
       if ((!hasBlock(below) || SpritePaths.isPermeable(blocks[below]!))) {
         if (world.outOfBoundsInt(below)) {
-          print('Removing water at $below');
           newWater.remove(here);
           continue;
         }
