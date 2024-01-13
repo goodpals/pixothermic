@@ -4,7 +4,9 @@ import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/models/constants.dart';
+import 'package:hot_cold/objects/static_block.dart';
 import 'package:hot_cold/objects/steam_particles.dart';
 import 'package:hot_cold/utils/long_tick.dart';
 import 'package:hot_cold/utils/pixo_world.dart';
@@ -32,6 +34,13 @@ class Player extends BodyComponent
                 e.fixtureB.userData == Flags.feet),
       ) ||
       body.linearVelocity.y.abs() < 0.1;
+
+  @override
+  void beginContact(Object other, Contact contact) {
+    if (other is StaticBlock) {
+      sounds().playContactSound();
+    }
+  }
 
   final double width;
   final double height;
@@ -101,6 +110,7 @@ class Player extends BodyComponent
       if (isGrounded) {
         body.applyForce(Vector2(0, -60000));
         jumped = jumpMax;
+        sounds().playJumpSound();
       }
     }
     return false;

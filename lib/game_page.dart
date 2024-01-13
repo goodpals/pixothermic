@@ -149,7 +149,8 @@ class _GamePageState extends State<GamePage> {
                                 child: Text(
                                   pickWinMessage(),
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               )
                             : const Center(
