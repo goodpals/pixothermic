@@ -30,6 +30,8 @@ class LevelData extends Equatable {
   int get leftMostBlock => foreground.keys.map((e) => e.$1).reduce(min);
   int get rightMostBlock => foreground.keys.map((e) => e.$1).reduce(max);
 
+  int get lowestBlock => foreground.keys.map((e) => e.$2).reduce(max);
+
   const LevelData({
     required this.id,
     this.title,

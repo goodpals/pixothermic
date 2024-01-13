@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/game.dart';
@@ -27,6 +28,20 @@ class GamePage extends StatefulWidget {
 class _GamePageState extends State<GamePage> {
   late GameClass game = _makeGame();
   final _fpsController = FpsController();
+  late final StreamSubscription _settingsSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsSub = settings().stream.listen(game.updateSettings);
+  }
+
+  @override
+  void dispose() {
+    _settingsSub.cancel();
+    _fpsController.close();
+    super.dispose();
+  }
 
   void _onWin() {
     if (widget.levelId != null) {
@@ -36,17 +51,11 @@ class _GamePageState extends State<GamePage> {
 
   GameClass _makeGame() =>
       GameClass(widget.level, onWin: _onWin, onFpsUpdate: _onFpsUpdate)
-        ..rayDensity = settings().rayDensity;
+        ..updateSettings(settings().state);
 
   void _resetGame() => setState(() => game = _makeGame());
 
   void _onFpsUpdate(double fps) => _fpsController.update(fps);
-
-  void _adjustRayDensity(double density) {
-    setState(() => game.rayDensity = density);
-    _focusNode.requestFocus();
-    settings().setRayDensity(density);
-  }
 
   static const List<String> deathMessages = [
     'YOU\nDIED',
@@ -106,15 +115,11 @@ class _GamePageState extends State<GamePage> {
             ),
             IconButton(
               icon: const Icon(Icons.settings),
-              onPressed: () async {
-                final rd = await showDialog(
+              onPressed: () {
+                showDialog(
                   context: context,
-                  builder: (context) =>
-                      SettingsDialog(rayDensity: game.rayDensity),
+                  builder: (_) => const SettingsDialog(),
                 );
-                if (rd != null) {
-                  _adjustRayDensity(rd);
-                }
               },
             ),
           ],

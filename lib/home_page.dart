@@ -7,6 +7,7 @@ import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/editor/editor_page.dart';
 import 'package:hot_cold/models/levels.dart';
 import 'package:hot_cold/store/progress_store.dart';
+import 'package:hot_cold/widgets/settings_dialog.dart';
 import 'package:quiver/iterables.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,8 +35,13 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.delete),
           ),
           IconButton(
-            onPressed: () => music().toggleMusic(),
-            icon: const Icon(Icons.music_note),
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => const SettingsDialog(),
+              );
+            },
           ),
         ],
       ),
