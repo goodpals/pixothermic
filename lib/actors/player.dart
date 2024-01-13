@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/objects/steam_particles.dart';
 import 'package:hot_cold/utils/long_tick.dart';
+import 'package:hot_cold/sounds_player.dart';
 
 const breathMax = 4;
 const jumpMax = 4;
@@ -20,15 +22,18 @@ class Player extends BodyComponent
   int jumped = 0;
 
   bool get isGrounded =>
-      body.contacts.any((e) =>
-          e.isTouching() &&
-          (e.fixtureA.userData == Flags.feet ||
-              e.fixtureB.userData == Flags.feet),) ||
+      body.contacts.any(
+        (e) =>
+            e.isTouching() &&
+            (e.fixtureA.userData == Flags.feet ||
+                e.fixtureB.userData == Flags.feet),
+      ) ||
       body.linearVelocity.y.abs() < 0.1;
 
   final double width;
   final double height;
   final VoidCallback onDeath;
+  final SoundsPlayer soundsPlayer = SoundsPlayer();
 
   Player({
     required Vector2 position,
@@ -94,6 +99,11 @@ class Player extends BodyComponent
       if (isGrounded) {
         body.applyForce(Vector2(0, -60000));
         jumped = jumpMax;
+        // SoundsPlayer.playSound();
+        soundsPlayer.playSound(
+          AssetSource('audio/jump_sound.wav'),
+          0.3,
+        );
       }
     }
     return false;

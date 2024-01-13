@@ -42,3 +42,4 @@ flutter:
     - assets/levels/
     - assets/music.mp3
     - assets/fonts/
+    - assets/audio/
