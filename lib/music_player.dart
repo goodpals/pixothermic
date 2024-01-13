@@ -4,6 +4,7 @@ import 'package:hot_cold/store/settings_store.dart';
 
 class MusicPlayer {
   static const _volumeMultiplier = 0.2;
+  static const _musicFilePath = 'audio/music.mp3';
   final player = AudioPlayer();
 
   bool get isPlaying => player.state == PlayerState.playing;
@@ -23,7 +24,7 @@ class MusicPlayer {
     if (vol <= 0) return;
 
     await player.setReleaseMode(ReleaseMode.loop);
-    await player.play(AssetSource('music.mp3'), volume: vol);
+    await player.play(AssetSource(_musicFilePath), volume: vol);
   }
 
   void stopMusic() async {

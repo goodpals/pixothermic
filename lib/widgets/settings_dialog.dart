@@ -41,7 +41,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 max: 32,
                 divisions: 28,
               ),
-              // music volume
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
