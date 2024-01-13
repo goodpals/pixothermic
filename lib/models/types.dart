@@ -18,3 +18,5 @@ extension IntVecExtension on IntVec {
 }
 
 IntVec intVecFromString(String s) => IntVecExtension.import(s);
+
+typedef Bounds = ({double? left, double? right, double? top, double? bottom});

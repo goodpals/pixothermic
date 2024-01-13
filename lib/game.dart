@@ -15,6 +15,7 @@ import 'package:hot_cold/objects/foreground_layer.dart';
 import 'package:hot_cold/store/settings_store.dart';
 import 'package:hot_cold/utils/fps_updater.dart';
 import 'package:hot_cold/utils/heatable.dart';
+import 'package:hot_cold/utils/pixo_world.dart';
 import 'package:hot_cold/utils/reflective.dart';
 
 class GameClass extends Forge2DGame
@@ -23,7 +24,17 @@ class GameClass extends Forge2DGame
   final LevelData level;
   final void Function(double fps)? onFpsUpdate;
 
-  GameClass(this.level, {this.onWin, this.onFpsUpdate});
+  GameClass(this.level, {this.onWin, this.onFpsUpdate})
+      : super(
+          world: PixothermicWorld(
+            bounds: (
+              top: null,
+              bottom: (level.lowestBlock + 8) * unit,
+              left: null,
+              right: null,
+            ),
+          ),
+        );
 
   late double sunAngle = level.sunAngle.toDouble();
   late double sunHeight = level.sunHeight.toDouble();

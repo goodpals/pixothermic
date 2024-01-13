@@ -7,12 +7,17 @@ import 'package:flutter/services.dart';
 import 'package:hot_cold/models/constants.dart';
 import 'package:hot_cold/objects/steam_particles.dart';
 import 'package:hot_cold/utils/long_tick.dart';
+import 'package:hot_cold/utils/pixo_world.dart';
 
 const breathMax = 4;
 const jumpMax = 4;
 
 class Player extends BodyComponent
-    with KeyboardHandler, ContactCallbacks, LongTick {
+    with
+        KeyboardHandler,
+        ContactCallbacks,
+        LongTick,
+        HasWorldReference<PixothermicWorld> {
   int hDir = 0;
   bool submerged = false;
   int breath = breathMax;
@@ -20,10 +25,12 @@ class Player extends BodyComponent
   int jumped = 0;
 
   bool get isGrounded =>
-      body.contacts.any((e) =>
-          e.isTouching() &&
-          (e.fixtureA.userData == Flags.feet ||
-              e.fixtureB.userData == Flags.feet),) ||
+      body.contacts.any(
+        (e) =>
+            e.isTouching() &&
+            (e.fixtureA.userData == Flags.feet ||
+                e.fixtureB.userData == Flags.feet),
+      ) ||
       body.linearVelocity.y.abs() < 0.1;
 
   final double width;
@@ -106,24 +113,32 @@ class Player extends BodyComponent
         Vector2(hDir * dt * (isGrounded ? 2000 : 200), 0),
       );
     }
+
     super.update(dt);
   }
 
   @override
   void onLongTick() {
+    if (!dead && world.outOfBounds(position)) {
+      return _die();
+    }
     if (jumped > 0) {
       jumped--;
     }
     if (submerged && !dead) {
       add(SteamParticles(position: body.position));
       breath--;
-      if (breath <= 0) {
-        dead = true;
-        onDeath();
+      if (breath <= 0 && !dead) {
+        _die();
       }
     } else {
       breath = min(breath + 1, breathMax);
     }
+  }
+
+  void _die() {
+    dead = true;
+    onDeath();
   }
 }
 
