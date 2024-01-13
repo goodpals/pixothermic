@@ -29,7 +29,7 @@ class GameClass extends Forge2DGame
           world: PixothermicWorld(
             bounds: (
               top: null,
-              bottom: (level.lowestBlock + 8) * unit,
+              bottom: (level.lowestBlock + 8),
               left: null,
               right: null,
             ),

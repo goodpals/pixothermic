@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:hot_cold/models/constants.dart';
 
-typedef IntVec = (int, int);
+typedef IntVec = (int x, int y);
 
 extension IntVecExtension on IntVec {
   IntVec get down => (this.$1, this.$2 + 1);
@@ -19,4 +19,10 @@ extension IntVecExtension on IntVec {
 
 IntVec intVecFromString(String s) => IntVecExtension.import(s);
 
-typedef Bounds = ({double? left, double? right, double? top, double? bottom});
+typedef Bounds = ({int? left, int? right, int? top, int? bottom});
+typedef WorldBounds = ({
+  double? left,
+  double? right,
+  double? top,
+  double? bottom
+});

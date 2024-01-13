@@ -21,9 +21,10 @@ import 'package:hot_cold/objects/mirror.dart';
 import 'package:hot_cold/objects/static_block.dart';
 import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/long_tick.dart';
+import 'package:hot_cold/utils/pixo_world.dart';
 
 class ForegroundLayer extends PositionComponent
-    with LongTick, HasGameRef<GameClass> {
+    with LongTick, HasGameRef<GameClass>, HasWorldReference<PixothermicWorld> {
   final LevelData level;
   final Player player;
 
@@ -131,6 +132,11 @@ class ForegroundLayer extends PositionComponent
       final here = w.key;
       final below = w.key.down;
       if ((!hasBlock(below) || SpritePaths.isPermeable(blocks[below]!))) {
+        if (world.outOfBoundsInt(below)) {
+          print('Removing water at $below');
+          newWater.remove(here);
+          continue;
+        }
         final belowAmt = newWater[below] ?? 0;
         if (belowAmt < 1) {
           newWater[below] = min(belowAmt + w.value, 1);
