@@ -12,6 +12,7 @@ import 'package:hot_cold/models/level_data.dart';
 import 'package:hot_cold/models/sprites.dart';
 import 'package:hot_cold/objects/end_portal.dart';
 import 'package:hot_cold/objects/foreground_layer.dart';
+import 'package:hot_cold/store/settings_store.dart';
 import 'package:hot_cold/utils/fps_updater.dart';
 import 'package:hot_cold/utils/heatable.dart';
 import 'package:hot_cold/utils/reflective.dart';
@@ -33,6 +34,10 @@ class GameClass extends Forge2DGame
   bool lockCamera = true;
 
   late final (int, int) hConstraints = level.horizontalConstraints;
+
+  void updateSettings(Settings settings) {
+    rayDensity = settings.rayDensity;
+  }
 
   double _rayDensity = 50;
   double get rayDensity => _rayDensity;
