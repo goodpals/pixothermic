@@ -1,49 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hot_cold/locator.dart';
+import 'package:hot_cold/store/settings_store.dart';
 
 class SettingsDialog extends StatefulWidget {
-  final double rayDensity;
-  const SettingsDialog({super.key, required this.rayDensity});
+  const SettingsDialog({super.key});
 
   @override
   State<SettingsDialog> createState() => _SettingsDialogState();
 }
 
 class _SettingsDialogState extends State<SettingsDialog> {
-  late double rayDensity = widget.rayDensity;
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      // title: const Icon(Icons.settings),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      title: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Icon(Icons.sunny),
-              Text('Ray density: ${rayDensity.round()}'),
-            ],
-          ),
-          Slider(
-            value: rayDensity,
-            onChanged: (v) => setState(() => rayDensity = v),
-            min: 4,
-            max: 32,
-            divisions: 28,
-          ),
+          Icon(Icons.settings),
+          SizedBox(width: 16),
+          Text('Settings'),
         ],
       ),
-      actions: [
-        IconButton(
-          onPressed: () => Navigator.pop(context, null),
-          icon: const Icon(Icons.cancel),
-        ),
-        IconButton(
-          onPressed: () => Navigator.pop(context, rayDensity),
-          icon: const Icon(Icons.check),
-        ),
-      ],
+      content: BlocBuilder<SettingsStore, Settings>(
+        builder: (context, state) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Icon(Icons.sunny),
+                  Text('Ray density: ${state.rayDensity.round()}'),
+                ],
+              ),
+              Slider(
+                value: state.rayDensity,
+                onChanged: settings().setRayDensity,
+                min: 4,
+                max: 32,
+                divisions: 28,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Icon(Icons.music_note),
+                  Text('Music volume: ${(state.musicVolume * 100).round()}%'),
+                ],
+              ),
+              Slider(
+                value: state.musicVolume,
+                onChanged: settings().setMusicVolume,
+                min: 0,
+                max: 1,
+                divisions: 10,
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

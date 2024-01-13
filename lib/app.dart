@@ -7,6 +7,7 @@ import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/splash_page.dart';
 import 'package:hot_cold/store/level_store.dart';
 import 'package:hot_cold/store/progress_store.dart';
+import 'package:hot_cold/store/settings_store.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -25,6 +26,9 @@ class _AppState extends State<App> {
         ),
         BlocProvider<ProgressStore>(
           create: (_) => progress(),
+        ),
+        BlocProvider<SettingsStore>(
+          create: (_) => settings(),
         ),
       ],
       child: MaterialApp(

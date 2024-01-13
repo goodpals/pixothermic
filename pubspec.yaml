@@ -40,5 +40,5 @@ flutter:
     - assets/images/blocks/
     - assets/images/backgrounds/
     - assets/levels/
-    - assets/music.mp3
     - assets/fonts/
+    - assets/audio/
