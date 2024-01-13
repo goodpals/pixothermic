@@ -10,7 +10,15 @@ class SettingsStore extends Cubit<Settings> {
 
   void _init() async {
     box = await Hive.openBox('settings');
+    _loadStateFromBox();
   }
+
+  void _loadStateFromBox() => emit(
+        Settings(
+          rayDensity: rayDensity,
+          musicVolume: musicVolume,
+        ),
+      );
 
   double get rayDensity => box.get('ray_density', defaultValue: 16.0);
   void setRayDensity(double density) {
