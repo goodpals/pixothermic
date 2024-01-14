@@ -31,7 +31,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Icon(Icons.sunny),
-                  Text('Ray density: ${state.rayDensity.round()}'),
+                  Text('Ray Density: ${state.rayDensity.round()}'),
                 ],
               ),
               Slider(
@@ -45,12 +45,27 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Icon(Icons.music_note),
-                  Text('Music volume: ${(state.musicVolume * 100).round()}%'),
+                  Text('Music Volume: ${(state.musicVolume * 100).round()}%'),
                 ],
               ),
               Slider(
                 value: state.musicVolume,
                 onChanged: settings().setMusicVolume,
+                min: 0,
+                max: 1,
+                divisions: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Icon(Icons.sports_esports),
+                  Text(
+                      'Sound FX Volume: ${(state.soundsVolume * 100).round()}%'),
+                ],
+              ),
+              Slider(
+                value: state.soundsVolume,
+                onChanged: settings().setSoundsVolume,
                 min: 0,
                 max: 1,
                 divisions: 10,
