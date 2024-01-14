@@ -17,6 +17,7 @@ class SettingsStore extends Cubit<Settings> {
         Settings(
           rayDensity: rayDensity,
           musicVolume: musicVolume,
+          soundsVolume: soundsVolume,
         ),
       );
 
@@ -33,28 +34,40 @@ class SettingsStore extends Cubit<Settings> {
     box.put('music_volume', volume);
     emit(state.copyWith(musicVolume: volume));
   }
+
+  double get soundsVolume => box.get('sounds_volume', defaultValue: 0.5);
+  void setSoundsVolume(double volume) {
+    if (volume == state.soundsVolume) return;
+    box.put('sounds_volume', volume);
+    emit(state.copyWith(soundsVolume: volume));
+  }
 }
 
 class Settings {
   final double rayDensity;
   final double musicVolume;
+  final double soundsVolume;
 
   const Settings({
     required this.rayDensity,
     required this.musicVolume,
+    required this.soundsVolume,
   });
 
   static const initial = Settings(
     rayDensity: 16,
     musicVolume: 0.5,
+    soundsVolume: 0.5,
   );
 
   Settings copyWith({
     double? rayDensity,
     double? musicVolume,
+    double? soundsVolume,
   }) =>
       Settings(
         rayDensity: rayDensity ?? this.rayDensity,
         musicVolume: musicVolume ?? this.musicVolume,
+        soundsVolume: soundsVolume ?? this.soundsVolume,
       );
 }

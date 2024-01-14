@@ -156,7 +156,7 @@ class _GamePageState extends State<GamePage> {
                             : const Center(
                                 heightFactor: 1,
                                 child: Text(
-                                  'Congratulations!\nYou have completed all levels!',
+                                  'Congratulations!\nYou have completed the final level!',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
