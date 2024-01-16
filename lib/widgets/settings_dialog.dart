@@ -73,7 +73,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 divisions: 10,
               ),
               // To clear campaign progress
-              const ClearProgressWidget(),
+              const ClearProgressButton(),
             ],
           );
         },

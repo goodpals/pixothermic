@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hot_cold/store/progress_store.dart';
+import 'package:hot_cold/locator.dart';
 
-class ClearProgressWidget extends StatefulWidget {
-  const ClearProgressWidget({super.key});
+class ClearProgressButton extends StatefulWidget {
+  const ClearProgressButton({super.key});
 
   @override
-  State<ClearProgressWidget> createState() => _ClearProgressWidgetState();
+  State<ClearProgressButton> createState() => _ClearProgressButtonState();
 }
 
-class _ClearProgressWidgetState extends State<ClearProgressWidget> {
-  bool confirmationDialogShowing = false;
+class _ClearProgressButtonState extends State<ClearProgressButton> {
+  bool confirming = false;
+  void setConfirming(bool value) {
+    setState(() {
+      confirming = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class _ClearProgressWidgetState extends State<ClearProgressWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Icon(Icons.delete),
-            confirmationDialogShowing
+            confirming
                 ? const Padding(
                     padding: EdgeInsets.only(right: 65.0),
                     child: Text(
@@ -31,7 +35,7 @@ class _ClearProgressWidgetState extends State<ClearProgressWidget> {
                 : const Text('Clear campaign progress?'),
           ],
         ),
-        confirmationDialogShowing
+        confirming
             ? Padding(
                 padding: const EdgeInsets.only(top: 5.0),
                 child: Row(
@@ -39,12 +43,8 @@ class _ClearProgressWidgetState extends State<ClearProgressWidget> {
                   children: [
                     OutlinedButton(
                       onPressed: () {
-                        context.read<ProgressStore>().clear();
-                        setState(
-                          () {
-                            confirmationDialogShowing = false;
-                          },
-                        );
+                        progress().clear();
+                        setConfirming(false);
                       },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -56,9 +56,7 @@ class _ClearProgressWidgetState extends State<ClearProgressWidget> {
                     ),
                     OutlinedButton(
                       onPressed: () {
-                        setState(() {
-                          confirmationDialogShowing = false;
-                        });
+                        setConfirming(false);
                       },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -75,11 +73,7 @@ class _ClearProgressWidgetState extends State<ClearProgressWidget> {
                 padding: const EdgeInsets.only(top: 5.0),
                 child: OutlinedButton(
                   onPressed: () {
-                    setState(
-                      () {
-                        confirmationDialogShowing = true;
-                      },
-                    );
+                    setConfirming(true);
                   },
                   child: const Text('Delete'),
                 ),
