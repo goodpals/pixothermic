@@ -55,9 +55,7 @@ class _ClearProgressButtonState extends State<ClearProgressButton> {
                       ),
                     ),
                     OutlinedButton(
-                      onPressed: () {
-                        setConfirming(false);
-                      },
+                      onPressed: () => setConfirming(false),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.red,
                       ),
@@ -72,9 +70,7 @@ class _ClearProgressButtonState extends State<ClearProgressButton> {
             : Padding(
                 padding: const EdgeInsets.only(top: 5.0),
                 child: OutlinedButton(
-                  onPressed: () {
-                    setConfirming(true);
-                  },
+                  onPressed: () => setConfirming(true),
                   child: const Text('Delete'),
                 ),
               ),
