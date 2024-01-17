@@ -31,10 +31,6 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.handyman),
           ),
           IconButton(
-            onPressed: () => context.read<ProgressStore>().clear(),
-            icon: const Icon(Icons.delete),
-          ),
-          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               showDialog(

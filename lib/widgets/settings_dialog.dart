@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hot_cold/locator.dart';
 import 'package:hot_cold/store/settings_store.dart';
+import 'package:hot_cold/widgets/clear_progress_widget.dart';
 
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({super.key});
@@ -60,7 +61,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 children: [
                   const Icon(Icons.sports_esports),
                   Text(
-                      'Sound FX Volume: ${(state.soundsVolume * 100).round()}%'),
+                    'Sound FX Volume: ${(state.soundsVolume * 100).round()}%',
+                  ),
                 ],
               ),
               Slider(
@@ -70,6 +72,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 max: 1,
                 divisions: 10,
               ),
+              // To clear campaign progress
+              const ClearProgressButton(),
             ],
           );
         },
