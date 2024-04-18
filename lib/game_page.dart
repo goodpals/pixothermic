@@ -173,7 +173,7 @@ class _GamePageState extends State<GamePage> {
                               onPressed: () async {
                                 final level = await levelStore()
                                     .loadCampaignLevel(context, nextLevelId!);
-                                if (!mounted) return;
+                                if (!context.mounted) return;
                                 await Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                     builder: (_) => GamePage(

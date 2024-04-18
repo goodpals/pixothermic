@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                               onTap: () async {
                                 final level = await levelStore()
                                     .loadCampaignLevel(context, i);
-                                if (!mounted) return;
+                                if (!context.mounted) return;
                                 await Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (_) => GamePage(
